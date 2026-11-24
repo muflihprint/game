@@ -3,43 +3,20 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Petualangan Satuan Panjang - Belajar Matematika SD</title>
-
-  <!-- Google Fonts: Fredoka (Judul Ceria) & Nunito (Teks Ramah Anak) -->
+  <title>Petualangan Satuan Panjang - Belajar & Kuis SD</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti untuk perayaan jawaban benar -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <!-- Google Fonts: Fredoka & Nunito -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
 
-  <!-- Tailwind CSS via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Canvas Confetti via CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            display: ['Fredoka', 'cursive', 'sans-serif'],
-            body: ['Nunito', 'sans-serif'],
-          },
-          colors: {
-            skyBg: '#E0F4FF',
-            sunYellow: '#FFD93D',
-            mintGreen: '#6BCB77',
-            coralOrange: '#FF8400',
-            pastelPurple: '#9B72CF',
-          }
-        }
-      }
-    };
-  </script>
-
   <style>
     body {
       font-family: 'Nunito', sans-serif;
-      background: linear-gradient(180deg, #CBEBFF 0%, #EAF8FF 55%, #E7F9EC 100%);
+      background: linear-gradient(180deg, #E0F2FE 0%, #F0F9FF 45%, #FEF9C3 100%);
       min-height: 100vh;
       overflow-x: hidden;
       user-select: none;
@@ -47,637 +24,503 @@
     }
 
     h1, h2, h3, .font-display {
-      font-family: 'Fredoka', cursive, sans-serif;
+      font-family: 'Fredoka', sans-serif;
     }
 
-    /* Tombol Taktil 3D Ramah Anak */
+    /* Efek tombol timbul ramah anak */
     .btn-tactile {
-      transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.12s ease, filter 0.15s ease;
+      transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.12s ease, background-color 0.15s ease;
     }
     .btn-tactile:active:not(:disabled) {
-      transform: translateY(4px);
-      border-bottom-width: 2px !important;
-    }
-    .btn-tactile:disabled {
-      opacity: 0.65;
-      cursor: not-allowed;
+      transform: translateY(3px) scale(0.98);
     }
 
-    /* Animasi Awan Melayang */
-    @keyframes floatSlow {
-      0%, 100% { transform: translateY(0px) translateX(0px); }
-      50% { transform: translateY(-8px) translateX(6px); }
-    }
-    .cloud-float {
-      animation: floatSlow 6s ease-in-out infinite;
-    }
-    .cloud-float-delayed {
-      animation: floatSlow 7.5s ease-in-out 2s infinite;
-    }
-
-    /* Animasi Lompatan Kelinci */
-    @keyframes bunnyIdle {
-      0%, 100% { transform: translateY(0) scale(1, 1); }
-      50% { transform: translateY(-5px) scale(0.97, 1.04); }
-    }
-    .bunny-idle {
-      animation: bunnyIdle 1.6s ease-in-out infinite;
-    }
-
-    @keyframes bunnyHopPulse {
-      0% { transform: translateY(0) scale(1.15, 0.85); }
-      45% { transform: translateY(-22px) scale(0.9, 1.15); }
+    /* Animasi kelinci melompat */
+    @keyframes bunnyHop {
+      0%   { transform: translateY(0) scale(1, 1); }
+      30%  { transform: translateY(4px) scale(1.12, 0.88); }
+      60%  { transform: translateY(-22px) scale(0.92, 1.1); }
+      85%  { transform: translateY(-6px) scale(1.03, 0.97); }
       100% { transform: translateY(0) scale(1, 1); }
     }
-    .bunny-hop-anim {
-      animation: bunnyHopPulse 0.36s cubic-bezier(0.28, 0.84, 0.42, 1);
+    .animate-bunny-hop {
+      animation: bunnyHop 0.42s cubic-bezier(0.28, 0.84, 0.42, 1);
     }
 
-    /* Animasi Getar Lembut Saat Input Kosong / Salah */
-    @keyframes gentleShake {
-      0%, 100% { transform: translateX(0); }
-      20% { transform: translateX(-7px); }
-      40% { transform: translateX(7px); }
-      60% { transform: translateX(-5px); }
-      80% { transform: translateX(5px); }
-    }
-    .animate-shake {
-      animation: gentleShake 0.45s ease-in-out;
-    }
-
-    /* Animasi Muncul Pop */
+    /* Animasi muncul halus */
     @keyframes popIn {
-      0% { opacity: 0; transform: scale(0.88) translateY(10px); }
+      0%   { opacity: 0; transform: scale(0.9) translateY(10px); }
       100% { opacity: 1; transform: scale(1) translateY(0); }
     }
     .animate-pop-in {
-      animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+      animation: popIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     }
 
-    /* Animasi Api Streak */
-    @keyframes flameGlow {
+    /* Animasi bergetar saat salah */
+    @keyframes gentleShake {
+      0%, 100% { transform: translateX(0); }
+      20%      { transform: translateX(-8px); }
+      40%      { transform: translateX(8px); }
+      60%      { transform: translateX(-6px); }
+      80%      { transform: translateX(6px); }
+    }
+    .animate-shake {
+      animation: gentleShake 0.4s ease-in-out;
+    }
+
+    /* Animasi api streak */
+    @keyframes flamePulse {
       0%, 100% { transform: scale(1) rotate(-3deg); }
-      50% { transform: scale(1.18) rotate(4deg); }
+      50%      { transform: scale(1.18) rotate(4deg); }
     }
     .flame-active {
       display: inline-block;
-      animation: flameGlow 0.8s ease-in-out infinite;
+      animation: flamePulse 0.9s infinite ease-in-out;
     }
 
-    /* Custom Scrollbar Halus */
-    ::-webkit-scrollbar {
-      width: 8px;
+    /* Dekorasi awan melayang */
+    @keyframes floatCloud {
+      0%, 100% { transform: translateX(0px); }
+      50%      { transform: translateX(14px); }
     }
-    ::-webkit-scrollbar-track {
-      background: rgba(255, 255, 255, 0.4);
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #93C5FD;
-      border-radius: 9999px;
+    .cloud-float {
+      animation: floatCloud 6s infinite ease-in-out;
     }
   </style>
 </head>
-<body class="text-slate-800 relative selection:bg-amber-200">
+<body class="text-slate-800 flex flex-col">
 
-  <!-- Dekorasi Latar Belakang Awan & Matahari -->
+  <!-- Dekorasi Awan Latar Belakang -->
   <div class="fixed inset-0 pointer-events-none overflow-hidden z-0" aria-hidden="true">
-    <div class="absolute -top-8 -right-8 w-36 h-36 bg-amber-300/45 rounded-full blur-xl"></div>
-    <svg class="cloud-float absolute top-14 left-4 w-28 sm:w-36 text-white/75" viewBox="0 0 120 60" fill="currentColor">
-      <path d="M25,50 L95,50 C108,50 116,41 116,30 C116,20 108,12 97,12 C94,5 86,0 77,0 C66,0 57,6 54,15 C50,13 45,12 40,12 C28,12 18,21 17,32 C10,34 5,40 5,46 C5,48 14,50 25,50 Z" />
-    </svg>
-    <svg class="cloud-float-delayed absolute top-32 right-6 w-24 sm:w-32 text-white/65" viewBox="0 0 120 60" fill="currentColor">
-      <path d="M25,50 L95,50 C108,50 116,41 116,30 C116,20 108,12 97,12 C94,5 86,0 77,0 C66,0 57,6 54,15 C50,13 45,12 40,12 C28,12 18,21 17,32 C10,34 5,40 5,46 C5,48 14,50 25,50 Z" />
-    </svg>
+    <div class="cloud-float absolute top-6 left-4 sm:left-12 text-5xl sm:text-6xl opacity-65">☁️</div>
+    <div class="cloud-float absolute top-14 right-6 sm:right-16 text-4xl sm:text-5xl opacity-55" style="animation-delay: 2s;">☁️</div>
+    <div class="hidden md:block cloud-float absolute bottom-16 left-10 text-5xl opacity-45" style="animation-delay: 3.5s;">🌤️</div>
   </div>
 
-  <!-- Header Navigasi Atas -->
-  <header class="sticky top-0 z-30 bg-white/90 backdrop-blur-md border-b-4 border-sky-200 shadow-sm">
-    <div class="max-w-3xl mx-auto px-3 sm:px-5 py-2.5 flex flex-wrap items-center justify-between gap-2">
-      <!-- Logo & Judul -->
-      <button onclick="app.goHome()" class="flex items-center gap-2.5 text-left group focus:outline-none" title="Kembali ke Beranda">
-        <div class="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-gradient-to-br from-amber-300 to-orange-400 border-b-4 border-orange-600 flex items-center justify-center text-xl sm:text-2xl shadow-sm group-hover:scale-105 transition-transform">
-          🐰
-        </div>
-        <div>
-          <h1 class="text-base sm:text-xl font-bold text-sky-900 leading-tight tracking-tight">
-            Petualangan Satuan Panjang
-          </h1>
-          <p class="text-[11px] sm:text-xs font-bold text-sky-600">Matematika Seru Anak SD • Angka 1–10</p>
-        </div>
-      </button>
-
-      <!-- Navigasi 2 Tab Utama + Toggle Suara -->
-      <div class="flex items-center gap-1.5 sm:gap-2 ml-auto">
-        <nav class="flex items-center bg-sky-100/90 p-1 rounded-2xl border-2 border-sky-200" aria-label="Menu Utama">
-          <button id="tab-btn-explorer" onclick="app.openExplorer()" class="btn-tactile px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-display font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all text-slate-700 hover:text-purple-800">
-            <span>🪜</span>
-            <span>Belajar Tangga</span>
-          </button>
-          <button id="tab-btn-quiz" onclick="app.goHome()" class="btn-tactile px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-display font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all bg-sky-500 text-white shadow-sm">
-            <span>🎮</span>
-            <span>Mulai Kuis</span>
-          </button>
-        </nav>
-
-        <button id="btn-sound-toggle" onclick="app.toggleSound()" aria-label="Atur Suara" class="btn-tactile w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-800 border-b-4 border-amber-300 flex items-center justify-center text-lg sm:text-xl shadow-sm shrink-0">
-          🔊
-        </button>
+  <!-- Bilah Navigasi Atas -->
+  <header class="relative z-10 w-full max-w-4xl mx-auto px-4 pt-4 pb-2 flex items-center justify-between gap-2">
+    <button type="button" onclick="app.goHome()" class="btn-tactile flex items-center gap-2.5 bg-white/95 hover:bg-white px-3.5 py-2 rounded-2xl shadow-md border-b-4 border-sky-200">
+      <span class="text-2xl sm:text-3xl">🐰</span>
+      <div class="text-left leading-tight">
+        <span class="font-display font-bold text-base sm:text-lg text-sky-700 block">Petualangan Panjang</span>
+        <span class="text-[11px] sm:text-xs font-extrabold text-amber-600">Matematika SD • Angka 1–10</span>
       </div>
+    </button>
+
+    <div class="flex items-center gap-2">
+      <!-- 2 Tab Navigasi Utama -->
+      <nav class="flex items-center bg-white/95 p-1 rounded-2xl shadow-md border-b-4 border-sky-200" aria-label="Navigasi Utama">
+        <button type="button" id="nav-tab-explorer" onclick="app.openExplorer()" class="btn-tactile px-3 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1.5 text-slate-600 hover:bg-sky-50">
+          <span>🪜</span>
+          <span>Belajar Tangga</span>
+        </button>
+        <button type="button" id="nav-tab-quiz" onclick="app.goHome()" class="btn-tactile px-3 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1.5 bg-sky-500 text-white shadow-xs">
+          <span>🎮</span>
+          <span>Mulai Kuis</span>
+        </button>
+      </nav>
+
+      <!-- Tombol Mute/Unmute -->
+      <button type="button" id="btn-sound-toggle" onclick="soundFX.toggle()" aria-label="Atur Suara" title="Suara Aktif" class="btn-tactile w-11 h-11 rounded-2xl bg-white/95 hover:bg-white shadow-md border-b-4 border-slate-200 flex items-center justify-center text-xl">
+        🔊
+      </button>
     </div>
   </header>
 
-  <!-- Kontainer Utama Aplikasi -->
-  <main class="relative z-10 max-w-3xl mx-auto px-3 sm:px-5 py-4 sm:py-6 pb-14">
+  <!-- Kontainer Utama -->
+  <main class="relative z-10 flex-1 w-full max-w-4xl mx-auto px-4 py-3 sm:py-5 flex flex-col justify-center">
 
-    <!-- ========================================================= -->
-    <!-- LAYAR 1: BERANDA / TAB MULAI KUIS (HOME SCREEN)           -->
-    <!-- ========================================================= -->
+    <!-- =========================================================
+         LAYAR 1: BERANDA & PILIH LEVEL (+2 TANGGA TIAP LEVEL)
+    ========================================================== -->
     <section id="screen-home" class="space-y-5 animate-pop-in">
-      <!-- Hero Card -->
-      <div class="bg-white rounded-3xl p-5 sm:p-7 border-b-8 border-sky-200 shadow-lg relative overflow-hidden">
-        <div class="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-          <!-- Maskot Kelinci SVG Ceria -->
-          <div class="w-24 h-24 sm:w-28 sm:h-28 shrink-0 bg-gradient-to-b from-sky-100 to-emerald-100 rounded-3xl border-4 border-sky-200 flex items-center justify-center shadow-inner">
-            <svg class="w-20 h-20 bunny-idle" viewBox="0 0 100 100" fill="none">
-              <!-- Telinga Kiri & Kanan -->
-              <rect x="31" y="8" width="13" height="36" rx="6.5" fill="#FFFFFF" stroke="#334155" stroke-width="3.5" transform="rotate(-8 31 8)"/>
-              <rect x="34.5" y="13" width="6" height="24" rx="3" fill="#FDA4AF" transform="rotate(-8 34.5 13)"/>
-              <rect x="55" y="8" width="13" height="36" rx="6.5" fill="#FFFFFF" stroke="#334155" stroke-width="3.5" transform="rotate(8 55 8)"/>
-              <rect x="58.5" y="13" width="6" height="24" rx="3" fill="#FDA4AF" transform="rotate(8 58.5 13)"/>
-              <!-- Kepala -->
-              <ellipse cx="50" cy="56" rx="26" ry="22" fill="#FFFFFF" stroke="#334155" stroke-width="3.5"/>
-              <!-- Pipi Merona -->
-              <ellipse cx="34" cy="60" rx="5" ry="3.2" fill="#FCA5A5" opacity="0.85"/>
-              <ellipse cx="66" cy="60" rx="5" ry="3.2" fill="#FCA5A5" opacity="0.85"/>
-              <!-- Mata Berbinar -->
-              <circle cx="40" cy="52" r="3.8" fill="#1E293B"/>
-              <circle cx="41.3" cy="50.7" r="1.3" fill="#FFFFFF"/>
-              <circle cx="60" cy="52" r="3.8" fill="#1E293B"/>
-              <circle cx="61.3" cy="50.7" r="1.3" fill="#FFFFFF"/>
-              <!-- Hidung & Mulut Senyum -->
-              <path d="M47 58.5 Q50 61.5 53 58.5" fill="#F43F5E" stroke="#F43F5E" stroke-width="2" stroke-linecap="round"/>
-              <path d="M44 63.5 Q50 68.5 56 63.5" stroke="#334155" stroke-width="3" stroke-linecap="round" fill="none"/>
-              <!-- Syal Petualang -->
-              <path d="M31 75 Q50 82 69 75 L72 84 Q50 90 28 84 Z" fill="#FF8400" stroke="#334155" stroke-width="3"/>
-            </svg>
-          </div>
-
-          <div class="text-center sm:text-left space-y-2 flex-1">
-            <span class="inline-block px-3 py-1 rounded-full bg-amber-100 text-amber-800 font-extrabold text-xs tracking-wide uppercase">
-              Halo Adik-Adik Hebat! 👋
-            </span>
-            <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 leading-snug">
-              Ayo Taklukkan Tangga Satuan Panjang!
-            </h2>
-            <p class="text-sm sm:text-base text-slate-600 font-semibold">
-              Mulai dari <span class="text-emerald-700 font-extrabold">2 tangga</span> lalu naik <span class="text-orange-600 font-extrabold">+2 tangga</span> di setiap level dengan angka mudah <span class="text-sky-700 font-extrabold">1 sampai 10</span>!
-            </p>
-          </div>
+      <!-- Banner Sambutan Maskot -->
+      <div class="bg-white/95 rounded-3xl p-5 sm:p-7 shadow-xl border-b-8 border-sky-200 flex flex-col sm:flex-row items-center gap-5 text-center sm:text-left">
+        <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-gradient-to-br from-amber-200 via-yellow-100 to-sky-100 flex items-center justify-center text-6xl sm:text-7xl shadow-inner shrink-0 border-4 border-white">
+          🐰
         </div>
-
-        <!-- Banner Akses Cepat ke Tangga Interaktif -->
-        <div class="mt-5 pt-4 border-t-2 border-dashed border-sky-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-purple-50/80 p-3.5 rounded-2xl">
-          <div class="flex items-center gap-3 text-center sm:text-left">
-            <span class="text-3xl">🪜</span>
-            <div>
-              <p class="font-extrabold text-purple-900 text-sm sm:text-base">Ingin mencoba lompatan Kiko dulu?</p>
-              <p class="text-xs sm:text-sm text-purple-700 font-semibold">Lihat cara kerja 6 anak tangga (km hingga mm) secara interaktif!</p>
-            </div>
+        <div class="space-y-2 flex-1">
+          <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-extrabold">
+            <span>✨</span>
+            <span>Aturan Ramah Anak: Angka Pokok 1–10 & Bertambah +2 Tangga Tiap Level</span>
           </div>
-          <button onclick="app.openExplorer()" class="btn-tactile w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-purple-500 hover:bg-purple-600 text-white border-b-4 border-purple-700 font-display font-semibold text-sm sm:text-base shadow-sm shrink-0">
-            Belajar Tangga ✨
-          </button>
+          <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-800 leading-tight">
+            Ayo Taklukkan <span class="text-sky-600">Tangga Satuan Panjang!</span>
+          </h1>
+          <p class="text-slate-600 text-sm sm:text-base font-semibold">
+            Bantu <strong>Kiko si Kelinci</strong> melompat dari <span class="text-rose-600 font-extrabold">km</span> sampai <span class="text-purple-600 font-extrabold">mm</span>. Setiap naik level, tantangan bertambah <strong>2 anak tangga</strong>!
+          </p>
         </div>
       </div>
 
-      <!-- Langkah 1: Pilih Tingkat Kesulitan (4 Level Bertahap +2 Tangga) -->
-      <div class="bg-white rounded-3xl p-5 sm:p-6 border-b-8 border-sky-200 shadow-lg space-y-4">
+      <!-- Langkah 1: Pilih Level (4 Level Bertahap +2 Tangga) -->
+      <div class="bg-white/95 rounded-3xl p-5 sm:p-6 shadow-xl border-b-8 border-indigo-200 space-y-4">
         <div class="flex flex-wrap items-center justify-between gap-2">
-          <div class="flex items-center gap-2">
-            <span class="w-8 h-8 rounded-full bg-sky-500 text-white font-display font-bold flex items-center justify-center text-base">1</span>
-            <h3 class="text-lg sm:text-xl font-bold text-slate-800">Pilih Level Petualangan (+2 Tangga Tiap Level)</h3>
-          </div>
-          <span class="px-3 py-1 rounded-full bg-sky-100 text-sky-800 font-extrabold text-xs">
-            Angka Dasar: 1 – 10
+          <h2 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2">
+            <span class="w-8 h-8 rounded-xl bg-indigo-500 text-white flex items-center justify-center text-sm font-black">1</span>
+            <span>Pilih Level Tangga</span>
+          </h2>
+          <span class="text-xs font-extrabold px-3 py-1 rounded-full bg-amber-100 text-amber-800">
+            Pengali/Angka Dasar: 1 – 10
           </span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5" id="level-cards">
-          <!-- Level 1: Pemula (2 Tangga) -->
-          <button type="button" onclick="app.selectLevel(1)" id="card-level-1" class="level-card btn-tactile text-left p-4 rounded-2xl border-4 border-emerald-400 bg-emerald-50/90 shadow-sm relative transition-all flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-1.5">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-2xl">🌱</span>
-                  <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-200 text-emerald-950">2 Tangga</span>
-                </div>
-                <span class="level-badge px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-emerald-600 text-white">Dipilih ✓</span>
-              </div>
-              <h4 class="font-display font-bold text-lg text-emerald-950">Level 1 — Pemula</h4>
-              <p class="text-xs font-bold text-emerald-800 mt-0.5">Lompatan 1–2 tangga (×10 s.d. ×100)</p>
-              <!-- Pratinjau Satuan Aktif -->
-              <div class="mt-2 flex flex-wrap gap-1">
-                <span class="px-2 py-0.5 rounded-md bg-emerald-500 text-white font-display font-bold text-xs">m</span>
-                <span class="px-2 py-0.5 rounded-md bg-sky-500 text-white font-display font-bold text-xs">dm</span>
-                <span class="px-2 py-0.5 rounded-md bg-indigo-500 text-white font-display font-bold text-xs">cm</span>
-              </div>
+          <!-- Level 1: 2 Tangga -->
+          <button type="button" onclick="app.selectLevel(1)" data-level="1" class="level-card btn-tactile text-left p-4 rounded-2xl border-4 border-emerald-400 bg-emerald-50/90 shadow-sm relative overflow-hidden">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-2xl">🌱</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-emerald-500 text-white text-xs font-extrabold">2 Tangga</span>
             </div>
-            <div class="mt-2.5 px-2.5 py-1.5 rounded-xl bg-white/90 text-xs font-extrabold text-slate-700 border border-emerald-200">
-              Contoh: 4 m = 400 cm • 800 cm = 8 m
-            </div>
+            <h3 class="font-bold text-lg text-emerald-900">Level 1: Pemula</h3>
+            <p class="text-xs sm:text-sm text-emerald-800 font-bold mt-1">
+              Rentang <strong>m – dm – cm</strong> (lompatan 1–2 tangga, angka dasar 1–10).
+            </p>
           </button>
 
-          <!-- Level 2: Penjelajah (4 Tangga, +2 Tangga) -->
-          <button type="button" onclick="app.selectLevel(2)" id="card-level-2" class="level-card btn-tactile text-left p-4 rounded-2xl border-4 border-slate-200 bg-slate-50 hover:bg-amber-50/60 shadow-sm relative transition-all flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-1.5">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-2xl">🧭</span>
-                  <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-200 text-amber-950">4 Tangga (+2)</span>
-                </div>
-                <span class="level-badge hidden px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-amber-500 text-white">Dipilih ✓</span>
-              </div>
-              <h4 class="font-display font-bold text-lg text-slate-800">Level 2 — Penjelajah</h4>
-              <p class="text-xs font-bold text-slate-600 mt-0.5">Lompatan 1–4 tangga (×100 s.d. ×10.000)</p>
-              <!-- Pratinjau Satuan Aktif -->
-              <div class="mt-2 flex flex-wrap gap-1">
-                <span class="px-2 py-0.5 rounded-md bg-amber-500 text-white font-display font-bold text-xs">dam</span>
-                <span class="px-2 py-0.5 rounded-md bg-emerald-500 text-white font-display font-bold text-xs">m</span>
-                <span class="px-2 py-0.5 rounded-md bg-sky-500 text-white font-display font-bold text-xs">dm</span>
-                <span class="px-2 py-0.5 rounded-md bg-indigo-500 text-white font-display font-bold text-xs">cm</span>
-                <span class="px-2 py-0.5 rounded-md bg-purple-500 text-white font-display font-bold text-xs">mm</span>
-              </div>
+          <!-- Level 2: 4 Tangga (+2 Tangga) -->
+          <button type="button" onclick="app.selectLevel(2)" data-level="2" class="level-card btn-tactile text-left p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-sky-50/70 shadow-sm relative overflow-hidden">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-2xl">🚀</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-sky-500 text-white text-xs font-extrabold">4 Tangga (+2)</span>
             </div>
-            <div class="mt-2.5 px-2.5 py-1.5 rounded-xl bg-white/90 text-xs font-extrabold text-slate-700 border border-slate-200">
-              Contoh: 3 dam = 3.000 cm • 60.000 mm = 6 dam
-            </div>
+            <h3 class="font-bold text-lg text-sky-900">Level 2: Penjelajah</h3>
+            <p class="text-xs sm:text-sm text-slate-600 font-bold mt-1">
+              Rentang <strong>dam – m – dm – cm – mm</strong> (lompatan hingga 4 tangga, angka dasar 1–10).
+            </p>
           </button>
 
-          <!-- Level 3: Petualang (6 Tangga Penuh, +2 Tangga) -->
-          <button type="button" onclick="app.selectLevel(3)" id="card-level-3" class="level-card btn-tactile text-left p-4 rounded-2xl border-4 border-slate-200 bg-slate-50 hover:bg-orange-50/60 shadow-sm relative transition-all flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-1.5">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-2xl">🚀</span>
-                  <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-orange-200 text-orange-950">6 Tangga (+2)</span>
-                </div>
-                <span class="level-badge hidden px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-orange-500 text-white">Dipilih ✓</span>
-              </div>
-              <h4 class="font-display font-bold text-lg text-slate-800">Level 3 — Petualang</h4>
-              <p class="text-xs font-bold text-slate-600 mt-0.5">6 tangga penuh (×1.000 s.d. ×1.000.000)</p>
-              <!-- Pratinjau Satuan Aktif -->
-              <div class="mt-2 flex flex-wrap gap-1">
-                <span class="px-1.5 py-0.5 rounded-md bg-rose-500 text-white font-display font-bold text-[11px]">km</span>
-                <span class="px-1.5 py-0.5 rounded-md bg-orange-500 text-white font-display font-bold text-[11px]">hm</span>
-                <span class="px-1.5 py-0.5 rounded-md bg-amber-500 text-white font-display font-bold text-[11px]">dam</span>
-                <span class="px-1.5 py-0.5 rounded-md bg-emerald-500 text-white font-display font-bold text-[11px]">m</span>
-                <span class="px-1.5 py-0.5 rounded-md bg-sky-500 text-white font-display font-bold text-[11px]">dm</span>
-                <span class="px-1.5 py-0.5 rounded-md bg-indigo-500 text-white font-display font-bold text-[11px]">cm</span>
-                <span class="px-1.5 py-0.5 rounded-md bg-purple-500 text-white font-display font-bold text-[11px]">mm</span>
-              </div>
+          <!-- Level 3: 6 Tangga (+2 Tangga) -->
+          <button type="button" onclick="app.selectLevel(3)" data-level="3" class="level-card btn-tactile text-left p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-amber-50/70 shadow-sm relative overflow-hidden">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-2xl">🌟</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-amber-500 text-white text-xs font-extrabold">6 Tangga (+2)</span>
             </div>
-            <div class="mt-2.5 px-2.5 py-1.5 rounded-xl bg-white/90 text-xs font-extrabold text-slate-700 border border-slate-200">
-              Contoh: 2 km = 2.000.000 mm • 900.000 cm = 9 km
-            </div>
+            <h3 class="font-bold text-lg text-amber-900">Level 3: Petualang</h3>
+            <p class="text-xs sm:text-sm text-slate-600 font-bold mt-1">
+              Tangga penuh <strong>km – mm</strong> (lompatan hingga 6 tangga, angka dasar 1–10).
+            </p>
           </button>
 
-          <!-- Level 4: Juara Tangga & Cerita (6 Tangga + Cerita) -->
-          <button type="button" onclick="app.selectLevel(4)" id="card-level-4" class="level-card btn-tactile text-left p-4 rounded-2xl border-4 border-slate-200 bg-slate-50 hover:bg-purple-50/60 shadow-sm relative transition-all flex flex-col justify-between">
-            <div>
-              <div class="flex items-center justify-between gap-2 mb-1.5">
-                <div class="flex items-center gap-1.5">
-                  <span class="text-2xl">🏆</span>
-                  <span class="px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-purple-200 text-purple-950">6 Tangga + Cerita</span>
-                </div>
-                <span class="level-badge hidden px-2.5 py-0.5 rounded-full text-xs font-extrabold bg-purple-600 text-white">Dipilih ✓</span>
-              </div>
-              <h4 class="font-display font-bold text-lg text-slate-800">Level 4 — Juara Tangga & Cerita</h4>
-              <p class="text-xs font-bold text-slate-600 mt-0.5">Konversi penuh, operasi hitung & soal cerita SD</p>
-              <!-- Pratinjau Satuan Aktif -->
-              <div class="mt-2 flex flex-wrap gap-1">
-                <span class="px-2 py-0.5 rounded-md bg-purple-600 text-white font-display font-bold text-[11px]">km s.d. mm</span>
-                <span class="px-2 py-0.5 rounded-md bg-pink-500 text-white font-display font-bold text-[11px]">+ / − Satuan</span>
-                <span class="px-2 py-0.5 rounded-md bg-teal-500 text-white font-display font-bold text-[11px]">Soal Cerita</span>
-              </div>
+          <!-- Level 4: Juara Tangga & Cerita -->
+          <button type="button" onclick="app.selectLevel(4)" data-level="4" class="level-card btn-tactile text-left p-4 rounded-2xl border-4 border-slate-200 bg-white hover:bg-purple-50/70 shadow-sm relative overflow-hidden">
+            <div class="flex items-center justify-between mb-1.5">
+              <span class="text-2xl">🏆</span>
+              <span class="px-2.5 py-0.5 rounded-full bg-purple-600 text-white text-xs font-extrabold">6 Tangga + Cerita</span>
             </div>
-            <div class="mt-2.5 px-2.5 py-1.5 rounded-xl bg-white/90 text-xs font-extrabold text-slate-700 border border-slate-200">
-              Contoh: 3 m + 40 cm = 340 cm
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <!-- Langkah 2: Pilih Cara Menjawab -->
-      <div class="bg-white rounded-3xl p-5 sm:p-6 border-b-8 border-sky-200 shadow-lg space-y-4">
-        <div class="flex items-center gap-2">
-          <span class="w-8 h-8 rounded-full bg-sky-500 text-white font-display font-bold flex items-center justify-center text-base">2</span>
-          <h3 class="text-lg sm:text-xl font-bold text-slate-800">Pilih Cara Menjawab</h3>
-        </div>
-
-        <div class="grid grid-cols-2 gap-3">
-          <button type="button" onclick="app.selectMode('choice')" id="mode-btn-choice" class="btn-tactile p-3.5 sm:p-4 rounded-2xl border-4 border-sky-400 bg-sky-50 flex flex-col sm:flex-row items-center justify-center gap-2 text-center">
-            <span class="text-2xl">🎯</span>
-            <div>
-              <div class="font-display font-bold text-base sm:text-lg text-sky-950">Pilihan Ganda</div>
-              <div class="text-xs font-bold text-sky-700">Pilih 1 dari 4 jawaban</div>
-            </div>
-          </button>
-
-          <button type="button" onclick="app.selectMode('input')" id="mode-btn-input" class="btn-tactile p-3.5 sm:p-4 rounded-2xl border-4 border-slate-200 bg-slate-50 hover:bg-sky-50/50 flex flex-col sm:flex-row items-center justify-center gap-2 text-center">
-            <span class="text-2xl">⌨️</span>
-            <div>
-              <div class="font-display font-bold text-base sm:text-lg text-slate-800">Ketik Jawaban</div>
-              <div class="text-xs font-bold text-slate-600">Tulis angkanya sendiri</div>
-            </div>
+            <h3 class="font-bold text-lg text-purple-900">Level 4: Juara SD</h3>
+            <p class="text-xs sm:text-sm text-slate-600 font-bold mt-1">
+              Tangga penuh <strong>km – mm</strong> + penjumlahan, pengurangan &amp; soal cerita anak!
+            </p>
           </button>
         </div>
 
-        <!-- Tombol Mulai Besar -->
-        <div class="pt-2">
-          <button onclick="app.startQuiz()" class="btn-tactile w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-400 via-green-500 to-teal-500 hover:brightness-105 text-white border-b-8 border-emerald-700 font-display font-bold text-xl sm:text-2xl shadow-lg flex items-center justify-center gap-3">
-            <span>MULAI PETUALANGAN!</span>
-            <span class="text-2xl sm:text-3xl">🚀</span>
-          </button>
-        </div>
-      </div>
-    </section>
+        <!-- Langkah 2: Pilih Cara Menjawab -->
+        <div class="pt-2 border-t-2 border-dashed border-slate-200">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-800 flex items-center gap-2 mb-3">
+            <span class="w-8 h-8 rounded-xl bg-amber-500 text-white flex items-center justify-center text-sm font-black">2</span>
+            <span>Pilih Cara Menjawab</span>
+          </h2>
 
-    <!-- ========================================================= -->
-    <!-- LAYAR 2: MODE EKSPLORASI TANGGA INTERAKTIF                 -->
-    <!-- ========================================================= -->
-    <section id="screen-explorer" class="hidden space-y-5 animate-pop-in">
-      <div class="bg-white rounded-3xl p-5 sm:p-6 border-b-8 border-purple-200 shadow-lg space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2">
-          <div>
-            <span class="inline-block px-3 py-1 rounded-full bg-purple-100 text-purple-800 font-extrabold text-xs">
-              MODE BELAJAR VISUAL • ANGKA 1–10 🪜
-            </span>
-            <h2 class="text-xl sm:text-2xl font-bold text-slate-800 mt-1">
-              Tangga Satuan Panjang Interaktif
-            </h2>
-          </div>
-          <button onclick="app.goHome()" class="btn-tactile px-3.5 py-2 rounded-2xl bg-sky-100 hover:bg-sky-200 text-sky-800 border-b-4 border-sky-300 font-bold text-sm">
-            Ke Kuis 🎮 →
-          </button>
-        </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <button type="button" onclick="app.setMode('mc')" id="mode-btn-mc" class="btn-tactile p-3.5 rounded-2xl border-4 border-sky-500 bg-sky-50 text-sky-950 font-extrabold flex items-center gap-3 text-left">
+              <span class="text-2xl bg-white w-11 h-11 rounded-xl flex items-center justify-center shadow-xs">🔘</span>
+              <div>
+                <div class="text-base">Pilihan Ganda</div>
+                <div class="text-xs text-sky-700 font-bold">Pilih 1 dari 4 jawaban tersedia</div>
+              </div>
+            </button>
 
-        <p class="text-sm text-slate-600 font-semibold">
-          Pilih angka <span class="text-emerald-600 font-extrabold">1 sampai 10</span>, lalu tekan <span class="text-orange-600 font-extrabold">satuan tujuan</span> pada anak tangga di bawah untuk melihat Kiko melompat!
-        </p>
-
-        <!-- Kontrol Angka (1-10) & Satuan -->
-        <div class="bg-sky-50/80 p-4 rounded-2xl border-2 border-sky-100 space-y-3">
-          <div class="space-y-1.5">
-            <span class="block text-xs font-extrabold text-slate-600 uppercase">1. Pilih Angka Dasar (1 – 10):</span>
-            <div class="grid grid-cols-5 sm:grid-cols-10 gap-1.5" id="explorer-presets">
-              <button onclick="explorer.setNumber(1)" data-num="1" class="preset-btn btn-tactile py-1.5 rounded-xl bg-white border-2 border-sky-300 font-display font-bold text-base text-sky-900 hover:bg-sky-100">1</button>
-              <button onclick="explorer.setNumber(2)" data-num="2" class="preset-btn btn-tactile py-1.5 rounded-xl bg-sky-500 border-2 border-sky-600 font-display font-bold text-base text-white">2</button>
-              <button onclick="explorer.setNumber(3)" data-num="3" class="preset-btn btn-tactile py-1.5 rounded-xl bg-white border-2 border-sky-300 font-display font-bold text-base text-sky-900 hover:bg-sky-100">3</button>
-              <button onclick="explorer.setNumber(4)" data-num="4" class="preset-btn btn-tactile py-1.5 rounded-xl bg-white border-2 border-sky-300 font-display font-bold text-base text-sky-900 hover:bg-sky-100">4</button>
-              <button onclick="explorer.setNumber(5)" data-num="5" class="preset-btn btn-tactile py-1.5 rounded-xl bg-white border-2 border-sky-300 font-display font-bold text-base text-sky-900 hover:bg-sky-100">5</button>
-              <button onclick="explorer.setNumber(6)" data-num="6" class="preset-btn btn-tactile py-1.5 rounded-xl bg-white border-2 border-sky-300 font-display font-bold text-base text-sky-900 hover:bg-sky-100">6</button>
-              <button onclick="explorer.setNumber(7)" data-num="7" class="preset-btn btn-tactile py-1.5 rounded-xl bg-white border-2 border-sky-300 font-display font-bold text-base text-sky-900 hover:bg-sky-100">7</button>
-              <button onclick="explorer.setNumber(8)" data-num="8" class="preset-btn btn-tactile py-1.5 rounded-xl bg-white border-2 border-sky-300 font-display font-bold text-base text-sky-900 hover:bg-sky-100">8</button>
-              <button onclick="explorer.setNumber(9)" data-num="9" class="preset-btn btn-tactile py-1.5 rounded-xl bg-white border-2 border-sky-300 font-display font-bold text-base text-sky-900 hover:bg-sky-100">9</button>
-              <button onclick="explorer.setNumber(10)" data-num="10" class="preset-btn btn-tactile py-1.5 rounded-xl bg-white border-2 border-sky-300 font-display font-bold text-base text-sky-900 hover:bg-sky-100">10</button>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 items-end pt-1">
-            <div>
-              <label class="block text-xs font-extrabold text-emerald-700 mb-1">2. Dari Satuan (Mulai)</label>
-              <select id="explorer-from-select" onchange="explorer.onSelectChange()" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-emerald-300 bg-white font-display font-bold text-base text-emerald-900 focus:outline-none focus:border-emerald-500"></select>
-            </div>
-            <div>
-              <label class="block text-xs font-extrabold text-orange-700 mb-1">3. Ke Satuan (Tujuan — atau klik tangga!)</label>
-              <select id="explorer-to-select" onchange="explorer.onSelectChange()" class="w-full px-3.5 py-2.5 rounded-xl border-2 border-orange-300 bg-white font-display font-bold text-base text-orange-900 focus:outline-none focus:border-orange-500"></select>
-            </div>
+            <button type="button" onclick="app.setMode('input')" id="mode-btn-input" class="btn-tactile p-3.5 rounded-2xl border-4 border-slate-200 bg-white text-slate-700 font-extrabold flex items-center gap-3 text-left">
+              <span class="text-2xl bg-slate-100 w-11 h-11 rounded-xl flex items-center justify-center shadow-xs">⌨️</span>
+              <div>
+                <div class="text-base">Ketik Jawaban</div>
+                <div class="text-xs text-slate-500 font-bold">Dilengkapi Bantu Hitung Nol!</div>
+              </div>
+            </button>
           </div>
         </div>
 
-        <!-- Visualisasi Tangga Interaktif (Explorer) -->
-        <div id="explorer-staircase-mount"></div>
-
-        <!-- Penjelasan Hasil Eksplorasi -->
-        <div id="explorer-explanation" class="bg-gradient-to-r from-amber-50 to-yellow-50 border-2 border-amber-300 rounded-2xl p-4 space-y-2.5">
-          <!-- Diisi dinamis oleh JS -->
-        </div>
-
-        <div class="pt-1 flex flex-col sm:flex-row gap-3">
-          <button onclick="explorer.replayJump()" class="btn-tactile flex-1 py-3 px-4 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white border-b-4 border-sky-700 font-display font-bold text-base flex items-center justify-center gap-2">
-            <span>🐰</span>
-            <span>Ulangi Lompatan Kelinci</span>
-          </button>
-          <button onclick="app.startQuiz()" class="btn-tactile flex-1 py-3 px-4 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white border-b-4 border-emerald-700 font-display font-bold text-base flex items-center justify-center gap-2">
-            <span>Siap Latihan Soal!</span>
+        <!-- Tombol Mulai Latihan -->
+        <div class="pt-2 flex flex-col sm:flex-row gap-3">
+          <button type="button" onclick="app.startQuiz()" class="btn-tactile flex-1 py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-display font-bold text-xl sm:text-2xl shadow-lg border-b-4 border-emerald-700 flex items-center justify-center gap-3">
             <span>🚀</span>
+            <span>Mulai Latihan Sekarang!</span>
+          </button>
+
+          <button type="button" onclick="app.openExplorer()" class="btn-tactile py-4 px-5 rounded-2xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-display font-bold text-base sm:text-lg shadow-md border-b-4 border-amber-600 flex items-center justify-center gap-2">
+            <span>🪜</span>
+            <span>Coba Tangga Dulu</span>
           </button>
         </div>
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- LAYAR 3: ARENA KUIS INTERAKTIF (QUIZ SCREEN)              -->
-    <!-- ========================================================= -->
-    <section id="screen-quiz" class="hidden space-y-4 animate-pop-in">
-      <!-- Bar Status Atas (Progress, Streak, Skor) -->
-      <div class="bg-white rounded-3xl p-3.5 sm:p-4 border-b-4 border-sky-200 shadow-md space-y-2.5">
-        <div class="flex items-center justify-between gap-2">
-          <button onclick="app.goHome()" class="btn-tactile px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border-b-2 border-slate-300 font-extrabold text-xs sm:text-sm">
-            ✕ Keluar
+    <!-- =========================================================
+         LAYAR 2: MODE BELAJAR TANGGA INTERAKTIF
+    ========================================================== -->
+    <section id="screen-explorer" class="hidden space-y-4 animate-pop-in">
+      <div class="bg-white/95 rounded-3xl p-5 sm:p-6 shadow-xl border-b-8 border-amber-200 space-y-5">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-800 flex items-center gap-2">
+              <span>🪜</span>
+              <span>Tangga Satuan Interaktif</span>
+            </h2>
+            <p class="text-sm sm:text-base text-slate-600 font-bold">
+              Ketuk anak tangga tujuan agar Kiko melompat dan membacakan hasilnya!
+            </p>
+          </div>
+          <button type="button" onclick="app.goHome()" class="btn-tactile px-4 py-2 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-extrabold text-sm border-b-4 border-sky-700">
+            🎮 Ke Menu Kuis
           </button>
+        </div>
 
-          <!-- Indikator Soal -->
-          <div class="font-display font-bold text-sm sm:text-base text-sky-900 bg-sky-100 px-3.5 py-1 rounded-full">
-            Soal <span id="quiz-progress-text">1</span> / 10
+        <!-- Panel Kendali Angka (1-10) & Satuan -->
+        <div class="bg-sky-50/90 rounded-2xl p-4 border-2 border-sky-200 space-y-3">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="text-xs sm:text-sm font-extrabold text-sky-900">1. Pilih Angka Pokok (1 – 10):</span>
+            <div class="flex flex-wrap gap-1.5" id="explorer-number-buttons"></div>
           </div>
 
-          <!-- Streak & Skor -->
-          <div class="flex items-center gap-2">
-            <div id="streak-badge" class="px-3 py-1 rounded-full bg-orange-100 text-orange-700 font-extrabold text-xs sm:text-sm flex items-center gap-1 border border-orange-200" title="Jawaban Benar Beruntun">
-              <span id="streak-icon">🔥</span>
-              <span id="quiz-streak">0</span>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-center pt-1">
+            <div>
+              <label for="explorer-from-select" class="block text-xs font-extrabold text-slate-600 mb-1">Dari Satuan Awal:</label>
+              <select id="explorer-from-select" onchange="explorer.onSelectChange()" class="w-full p-2.5 rounded-xl bg-white border-2 border-sky-300 font-extrabold text-slate-800 text-sm sm:text-base focus:outline-none focus:border-sky-500"></select>
             </div>
-            <div class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 font-extrabold text-xs sm:text-sm flex items-center gap-1 border border-amber-300" title="Skor Kamu">
-              <span>⭐</span>
-              <span id="quiz-score">0</span>
+
+            <div class="flex flex-col items-center justify-center">
+              <button type="button" onclick="explorer.replayJump()" class="btn-tactile w-full sm:w-auto px-4 py-2.5 rounded-2xl bg-amber-400 hover:bg-amber-500 text-amber-950 font-extrabold text-sm border-b-4 border-amber-600 flex items-center justify-center gap-1.5">
+                <span>🐰</span>
+                <span>Lompat &amp; Baca!</span>
+              </button>
+            </div>
+
+            <div>
+              <label for="explorer-to-select" class="block text-xs font-extrabold text-slate-600 mb-1">Ke Satuan Tujuan:</label>
+              <select id="explorer-to-select" onchange="explorer.onSelectChange()" class="w-full p-2.5 rounded-xl bg-white border-2 border-emerald-300 font-extrabold text-slate-800 text-sm sm:text-base focus:outline-none focus:border-emerald-500"></select>
             </div>
           </div>
         </div>
 
-        <!-- Progress Bar Visual -->
-        <div class="w-full h-3.5 bg-sky-100 rounded-full overflow-hidden p-0.5 border border-sky-200">
-          <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-sky-400 via-emerald-400 to-amber-400 rounded-full transition-all duration-500" style="width: 10%;"></div>
+        <!-- Visualisasi Tangga Interaktif + Hasil Penjelasan -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-center">
+          <div class="lg:col-span-7 bg-gradient-to-b from-sky-50 to-emerald-50/70 rounded-2xl p-3 sm:p-4 border-2 border-sky-200 overflow-x-auto">
+            <div id="explorer-staircase-container" class="min-w-[290px]"></div>
+          </div>
+
+          <div class="lg:col-span-5 space-y-3">
+            <div class="bg-amber-50 rounded-2xl p-4 sm:p-5 border-2 border-amber-300 space-y-2">
+              <span id="explorer-direction-badge" class="inline-block px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-extrabold">
+                ⬇️ Turun 2 Tangga
+              </span>
+              <div id="explorer-formula-display" class="text-xl sm:text-2xl font-display font-bold text-slate-800 leading-snug">
+                3 m = 300 cm
+              </div>
+              <p id="explorer-step-detail" class="text-sm text-slate-700 font-bold leading-relaxed">
+                Turun 2 anak tangga berarti dikali 100 (tambah 2 nol di belakang).
+              </p>
+            </div>
+
+            <div class="bg-indigo-50 rounded-2xl p-3.5 border-2 border-indigo-200 text-xs sm:text-sm font-bold text-indigo-900 space-y-1">
+              <div>💡 <strong>Ingat Kata Kiko:</strong></div>
+              <div>• <strong>Turun 1 tangga</strong> = dikali 10 (tambah 1 nol)</div>
+              <div>• <strong>Naik 1 tangga</strong> = dibagi 10 (kurangi 1 nol)</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =========================================================
+         LAYAR 3: ARENA KUIS LATIHAN INTERAKTIF
+    ========================================================== -->
+    <section id="screen-quiz" class="hidden space-y-4 animate-pop-in">
+      <!-- HUD Skor, Progress, Level & Streak -->
+      <div class="bg-white/95 rounded-3xl p-3.5 sm:p-4 shadow-lg border-b-4 border-sky-200 space-y-2.5">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <div class="flex items-center gap-2">
+            <span id="quiz-level-badge" class="px-3 py-1 rounded-xl bg-emerald-100 text-emerald-900 font-extrabold text-xs sm:text-sm">
+              🌱 Level 1 (2 Tangga)
+            </span>
+            <span class="px-3 py-1 rounded-xl bg-slate-100 text-slate-700 font-extrabold text-xs sm:text-sm">
+              Soal <span id="quiz-progress-text">1/10</span>
+            </span>
+          </div>
+
+          <div class="flex items-center gap-2 sm:gap-3">
+            <div class="px-3 py-1 rounded-xl bg-amber-100 text-amber-900 font-extrabold text-xs sm:text-sm flex items-center gap-1">
+              <span>⭐</span>
+              <span>Skor: <span id="quiz-score">0</span></span>
+            </div>
+            <div class="px-3 py-1 rounded-xl bg-rose-100 text-rose-800 font-extrabold text-xs sm:text-sm flex items-center gap-1">
+              <span id="streak-icon">🔥</span>
+              <span>Streak: <span id="quiz-streak">0</span></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bar Kemajuan Soal -->
+        <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
+          <div id="quiz-progress-bar" class="h-full bg-gradient-to-r from-sky-400 via-emerald-400 to-teal-500 transition-all duration-300 rounded-full" style="width: 10%;"></div>
         </div>
       </div>
 
-      <!-- Kartu Soal Utama -->
-      <div class="bg-white rounded-3xl p-5 sm:p-7 border-b-8 border-sky-200 shadow-lg space-y-4 relative">
-        <!-- Badge Jenis Soal & Tombol Bantuan Tangga -->
+      <!-- Kartu Pertanyaan Utama -->
+      <div id="quiz-question-card" class="bg-white/95 rounded-3xl p-5 sm:p-6 shadow-xl border-b-8 border-indigo-200 space-y-4">
+        <!-- Badge Kategori & Tombol Baca Soal / Tangga Bantuan -->
         <div class="flex flex-wrap items-center justify-between gap-2">
           <span id="quiz-category-badge" class="px-3 py-1 rounded-full bg-indigo-100 text-indigo-800 font-extrabold text-xs sm:text-sm">
-            🌱 Turun Tangga
+            ⬇️ Turun Tangga
           </span>
 
-          <button type="button" id="btn-toggle-helper" onclick="quiz.toggleHelper()" class="btn-tactile px-3.5 py-1.5 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 border-b-4 border-amber-300 font-extrabold text-xs sm:text-sm flex items-center gap-1.5">
-            <span>🪜</span>
-            <span id="helper-btn-label">Lihat Tangga Bantuan</span>
-          </button>
+          <div class="flex flex-wrap items-center gap-2">
+            <button type="button" id="btn-read-question" onclick="quiz.readCurrentQuestion()" class="btn-tactile px-3.5 py-1.5 rounded-2xl bg-sky-100 hover:bg-sky-200 text-sky-900 border-b-4 border-sky-300 font-extrabold text-xs sm:text-sm flex items-center gap-1.5" title="Dengarkan suara pembaca soal">
+              <span>🗣️</span>
+              <span>Baca Soal</span>
+            </button>
+
+            <button type="button" id="btn-toggle-helper" onclick="quiz.toggleHelper()" class="btn-tactile px-3.5 py-1.5 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 border-b-4 border-amber-300 font-extrabold text-xs sm:text-sm flex items-center gap-1.5">
+              <span>🪜</span>
+              <span id="helper-btn-label">Lihat Tangga Bantuan</span>
+            </button>
+          </div>
         </div>
 
-        <!-- Isi Pertanyaan -->
-        <div class="text-center py-2 sm:py-3 space-y-2">
-          <div id="quiz-emoji" class="text-4xl sm:text-5xl mb-1">📏</div>
-          <p id="quiz-question-text" class="text-xl sm:text-2xl md:text-3xl font-display font-bold text-slate-800 leading-relaxed">
+        <!-- Panel Tangga Bantuan (Opsional saat Kuis) -->
+        <div id="quiz-helper-panel" class="hidden bg-sky-50/95 rounded-2xl p-3.5 border-2 border-sky-200 space-y-2 animate-pop-in">
+          <div id="quiz-helper-staircase"></div>
+          <p id="quiz-helper-tip" class="text-xs sm:text-sm font-extrabold text-sky-900 text-center bg-white py-2 px-3 rounded-xl border border-sky-200"></p>
+        </div>
+
+        <!-- Teks Pertanyaan -->
+        <div class="bg-gradient-to-br from-slate-50 to-sky-50/70 rounded-2xl p-5 sm:p-6 border-2 border-slate-200/80 text-center space-y-2">
+          <p id="quiz-subprompt" class="hidden text-xs sm:text-sm font-extrabold text-indigo-600 uppercase tracking-wide"></p>
+          <h2 id="quiz-prompt" class="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-slate-800 leading-snug">
             3 m = ... cm
-          </p>
-          <p id="quiz-sub-prompt" class="hidden text-lg sm:text-xl font-extrabold text-sky-700 bg-sky-50 inline-block px-4 py-1.5 rounded-2xl border-2 border-sky-200">
-          </p>
+          </h2>
         </div>
 
-        <!-- Panel Tangga Bantuan (Collapsible) -->
-        <div id="quiz-helper-panel" class="hidden pt-2 border-t-2 border-dashed border-amber-200 space-y-3 animate-pop-in">
-          <div class="flex items-center justify-between text-xs font-extrabold px-1">
-            <span id="quiz-active-stairs-label" class="text-purple-800 bg-purple-100 px-2.5 py-1 rounded-full">
-              Tangga Aktif Level 1: m – dm – cm (2 Tangga)
-            </span>
-            <span class="text-slate-500 hidden sm:inline">Tangga redup = belum dipakai di level ini</span>
+        <!-- Area Jawaban Mode 1: Pilihan Ganda -->
+        <div id="quiz-mc-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1"></div>
+
+        <!-- Area Jawaban Mode 2: Ketik Jawaban + Bantu Hitung Nol + Keypad -->
+        <div id="quiz-input-container" class="hidden space-y-3 pt-1">
+          <div class="flex flex-col items-center gap-2">
+            <div class="w-full max-w-md flex items-center justify-center gap-2 bg-slate-100 p-3 rounded-2xl border-4 border-sky-300">
+              <input id="quiz-typed-display" type="text" readonly placeholder="?" class="w-full bg-transparent text-center font-display font-bold text-2xl sm:text-3xl text-slate-800 focus:outline-none" />
+              <span id="quiz-typed-unit" class="px-3 py-1 rounded-xl bg-sky-500 text-white font-display font-bold text-lg sm:text-xl shrink-0">
+                cm
+              </span>
+            </div>
+
+            <!-- Fitur Bantu Hitung Nol -->
+            <div id="zero-helper-pill" class="px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 text-xs sm:text-sm font-extrabold">
+              Ketik angka jawabanmu menggunakan tombol di bawah 👇
+            </div>
           </div>
-          <div id="quiz-staircase-mount"></div>
-          <div id="quiz-helper-tip" class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-3 text-xs sm:text-sm font-bold text-amber-950 text-center">
-            <!-- Tips arah lompatan tangga -->
+
+          <!-- Keypad Angka Besar Ramah Anak -->
+          <div class="max-w-sm mx-auto grid grid-cols-3 gap-2">
+            <button type="button" onclick="quiz.pressKeypad('1')" class="btn-tactile py-3 rounded-2xl bg-white hover:bg-sky-50 border-b-4 border-slate-300 font-display font-bold text-xl text-slate-800">1</button>
+            <button type="button" onclick="quiz.pressKeypad('2')" class="btn-tactile py-3 rounded-2xl bg-white hover:bg-sky-50 border-b-4 border-slate-300 font-display font-bold text-xl text-slate-800">2</button>
+            <button type="button" onclick="quiz.pressKeypad('3')" class="btn-tactile py-3 rounded-2xl bg-white hover:bg-sky-50 border-b-4 border-slate-300 font-display font-bold text-xl text-slate-800">3</button>
+            <button type="button" onclick="quiz.pressKeypad('4')" class="btn-tactile py-3 rounded-2xl bg-white hover:bg-sky-50 border-b-4 border-slate-300 font-display font-bold text-xl text-slate-800">4</button>
+            <button type="button" onclick="quiz.pressKeypad('5')" class="btn-tactile py-3 rounded-2xl bg-white hover:bg-sky-50 border-b-4 border-slate-300 font-display font-bold text-xl text-slate-800">5</button>
+            <button type="button" onclick="quiz.pressKeypad('6')" class="btn-tactile py-3 rounded-2xl bg-white hover:bg-sky-50 border-b-4 border-slate-300 font-display font-bold text-xl text-slate-800">6</button>
+            <button type="button" onclick="quiz.pressKeypad('7')" class="btn-tactile py-3 rounded-2xl bg-white hover:bg-sky-50 border-b-4 border-slate-300 font-display font-bold text-xl text-slate-800">7</button>
+            <button type="button" onclick="quiz.pressKeypad('8')" class="btn-tactile py-3 rounded-2xl bg-white hover:bg-sky-50 border-b-4 border-slate-300 font-display font-bold text-xl text-slate-800">8</button>
+            <button type="button" onclick="quiz.pressKeypad('9')" class="btn-tactile py-3 rounded-2xl bg-white hover:bg-sky-50 border-b-4 border-slate-300 font-display font-bold text-xl text-slate-800">9</button>
+            <button type="button" onclick="quiz.clearInput()" class="btn-tactile py-3 rounded-2xl bg-rose-100 hover:bg-rose-200 border-b-4 border-rose-300 font-extrabold text-sm text-rose-800">Hapus</button>
+            <button type="button" onclick="quiz.pressKeypad('0')" class="btn-tactile py-3 rounded-2xl bg-white hover:bg-sky-50 border-b-4 border-slate-300 font-display font-bold text-xl text-slate-800">0</button>
+            <button type="button" onclick="quiz.backspaceInput()" class="btn-tactile py-3 rounded-2xl bg-amber-100 hover:bg-amber-200 border-b-4 border-amber-300 font-extrabold text-lg text-amber-900">⌫</button>
           </div>
-        </div>
-      </div>
 
-      <!-- Area Jawaban: Pilihan Ganda -->
-      <div id="answer-zone-choice" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-        <!-- 4 Tombol Pilihan Ganda di-render via JS -->
-      </div>
-
-      <!-- Area Jawaban: Ketik Jawaban + Keypad Anak + Bantu Hitung Nol -->
-      <div id="answer-zone-input" class="hidden bg-white rounded-3xl p-4 sm:p-5 border-b-8 border-sky-200 shadow-lg space-y-3.5">
-        <!-- Bantu Hitung Nol & Pratinjau Titik Ribuan Otomatis -->
-        <div id="zero-helper-banner" class="flex flex-wrap items-center justify-between gap-2 bg-amber-50 border-2 border-amber-300 rounded-2xl px-3.5 py-2 text-xs sm:text-sm font-extrabold text-amber-950">
-          <div class="flex items-center gap-1.5">
-            <span>🔎</span>
-            <span>Terbaca: <span id="zero-helper-formatted" class="font-display text-base sm:text-lg text-sky-800">0</span></span>
+          <div class="max-w-sm mx-auto pt-1">
+            <button type="button" id="btn-submit-typed" onclick="quiz.submitTypedAnswer()" class="btn-tactile w-full py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-display font-bold text-xl border-b-4 border-emerald-700 shadow-md">
+              ✅ Cek Jawaban
+            </button>
           </div>
-          <span id="zero-helper-count" class="px-2.5 py-0.5 rounded-full bg-amber-200 text-amber-950 text-xs">
-            0 angka nol
-          </span>
-        </div>
-
-        <!-- Kotak Tampilan Angka -->
-        <div id="input-display-box" class="flex items-center justify-between gap-3 bg-sky-50 border-4 border-sky-300 rounded-2xl px-4 py-3">
-          <input id="quiz-text-input" type="text" inputmode="numeric" autocomplete="off" oninput="quiz.onInputChange()" placeholder="Ketik angka..." class="w-full bg-transparent font-display font-bold text-2xl sm:text-3xl text-slate-800 focus:outline-none placeholder:text-slate-400" />
-          <span id="quiz-input-unit" class="px-3.5 py-1.5 rounded-xl bg-sky-500 text-white font-display font-bold text-lg sm:text-xl shrink-0">
-            cm
-          </span>
-        </div>
-
-        <!-- Keypad Angka Besar Ramah Sentuhan (0 - 9) -->
-        <div class="grid grid-cols-4 gap-2 sm:gap-2.5">
-          <button type="button" onclick="quiz.keypadPress('1')" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-slate-100 hover:bg-sky-100 border-b-4 border-slate-300 font-display font-bold text-xl sm:text-2xl text-slate-800">1</button>
-          <button type="button" onclick="quiz.keypadPress('2')" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-slate-100 hover:bg-sky-100 border-b-4 border-slate-300 font-display font-bold text-xl sm:text-2xl text-slate-800">2</button>
-          <button type="button" onclick="quiz.keypadPress('3')" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-slate-100 hover:bg-sky-100 border-b-4 border-slate-300 font-display font-bold text-xl sm:text-2xl text-slate-800">3</button>
-          <button type="button" onclick="quiz.keypadBackspace()" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-rose-100 hover:bg-rose-200 border-b-4 border-rose-300 font-display font-bold text-lg sm:text-xl text-rose-800 flex items-center justify-center" title="Hapus 1 angka">⌫</button>
-
-          <button type="button" onclick="quiz.keypadPress('4')" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-slate-100 hover:bg-sky-100 border-b-4 border-slate-300 font-display font-bold text-xl sm:text-2xl text-slate-800">4</button>
-          <button type="button" onclick="quiz.keypadPress('5')" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-slate-100 hover:bg-sky-100 border-b-4 border-slate-300 font-display font-bold text-xl sm:text-2xl text-slate-800">5</button>
-          <button type="button" onclick="quiz.keypadPress('6')" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-slate-100 hover:bg-sky-100 border-b-4 border-slate-300 font-display font-bold text-xl sm:text-2xl text-slate-800">6</button>
-          <button type="button" onclick="quiz.keypadClear()" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-amber-100 hover:bg-amber-200 border-b-4 border-amber-300 font-display font-bold text-sm sm:text-base text-amber-900">Hapus</button>
-
-          <button type="button" onclick="quiz.keypadPress('7')" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-slate-100 hover:bg-sky-100 border-b-4 border-slate-300 font-display font-bold text-xl sm:text-2xl text-slate-800">7</button>
-          <button type="button" onclick="quiz.keypadPress('8')" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-slate-100 hover:bg-sky-100 border-b-4 border-slate-300 font-display font-bold text-xl sm:text-2xl text-slate-800">8</button>
-          <button type="button" onclick="quiz.keypadPress('9')" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-slate-100 hover:bg-sky-100 border-b-4 border-slate-300 font-display font-bold text-xl sm:text-2xl text-slate-800">9</button>
-          <button type="button" onclick="quiz.keypadPress('0')" class="btn-tactile h-12 sm:h-14 rounded-2xl bg-slate-100 hover:bg-sky-100 border-b-4 border-slate-300 font-display font-bold text-xl sm:text-2xl text-slate-800">0</button>
-
-          <button type="button" id="btn-submit-input" onclick="quiz.submitInputAnswer()" class="btn-tactile col-span-4 h-13 sm:h-14 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 border-b-4 border-emerald-700 font-display font-bold text-lg sm:text-xl text-white shadow-md">
-            CEK JAWABAN ✓
-          </button>
         </div>
       </div>
 
       <!-- Kartu Umpan Balik & Penjelasan Setelah Menjawab -->
       <div id="quiz-feedback-card" class="hidden rounded-3xl p-5 sm:p-6 border-b-8 shadow-xl space-y-4 animate-pop-in">
         <div class="flex items-start gap-3.5">
-          <div id="feedback-icon" class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-sm">
+          <button type="button" onclick="quiz.replayFeedbackVoice()" title="Putar ulang suara" id="feedback-icon" class="btn-tactile w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-sm cursor-pointer">
             🎉
-          </div>
+          </button>
           <div class="space-y-1 flex-1">
-            <h3 id="feedback-title" class="font-display font-bold text-xl sm:text-2xl">
-              Hebat Sekali!
-            </h3>
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h3 id="feedback-title" class="font-display font-bold text-xl sm:text-2xl">
+                Hebat Sekali!
+              </h3>
+              <button type="button" onclick="quiz.replayFeedbackVoice()" class="btn-tactile px-2.5 py-1 rounded-xl bg-white/85 hover:bg-white border border-slate-300 text-slate-800 font-extrabold text-xs flex items-center gap-1 shadow-xs">
+                <span>🗣️</span>
+                <span>Dengar Lagi</span>
+              </button>
+            </div>
             <p id="feedback-explanation" class="text-sm sm:text-base font-bold leading-relaxed">
               Penjelasan langkah demi langkah muncul di sini.
             </p>
           </div>
         </div>
 
-        <button id="btn-next-question" onclick="quiz.nextQuestion()" class="btn-tactile w-full py-3.5 px-6 rounded-2xl font-display font-bold text-lg sm:text-xl text-white shadow-md flex items-center justify-center gap-2">
+        <button type="button" id="btn-next-question" onclick="quiz.nextQuestion()" class="btn-tactile w-full py-3.5 px-6 rounded-2xl font-display font-bold text-lg sm:text-xl text-white shadow-md flex items-center justify-center gap-2">
           <span id="next-btn-label">Soal Berikutnya</span>
           <span>➡️</span>
         </button>
       </div>
     </section>
 
-    <!-- ========================================================= -->
-    <!-- LAYAR 4: RAPOR AKHIR RONDE (REPORT CARD SCREEN)           -->
-    <!-- ========================================================= -->
+    <!-- =========================================================
+         LAYAR 4: RAPOR AKHIR PETUALANGAN
+    ========================================================== -->
     <section id="screen-result" class="hidden space-y-5 animate-pop-in">
-      <div class="bg-white rounded-3xl p-6 sm:p-8 border-b-8 border-amber-300 shadow-xl text-center space-y-5 relative overflow-hidden">
-        <div class="inline-block px-4 py-1 rounded-full bg-amber-100 text-amber-800 font-extrabold text-xs sm:text-sm uppercase tracking-wider">
-          Rapor Petualangan Selesai! 🎊
+      <div class="bg-white/95 rounded-3xl p-6 sm:p-8 shadow-xl border-b-8 border-amber-300 text-center space-y-5">
+        <div id="result-stars" class="flex items-center justify-center gap-3 text-5xl sm:text-6xl">
+          <span>⭐</span>
+          <span>⭐</span>
+          <span>⭐</span>
         </div>
 
-        <!-- Bintang Perolehan (1 - 3 Bintang) -->
-        <div class="flex items-center justify-center gap-3 sm:gap-5 py-2" id="result-stars">
-          <span class="text-5xl sm:text-6xl transition-transform duration-500">⭐</span>
-          <span class="text-6xl sm:text-7xl -mt-3 transition-transform duration-500">⭐</span>
-          <span class="text-5xl sm:text-6xl transition-transform duration-500">⭐</span>
-        </div>
-
-        <div class="space-y-1.5">
+        <div class="space-y-2">
           <h2 id="result-title" class="text-2xl sm:text-4xl font-display font-bold text-slate-800">
-            Juara Satuan Panjang!
+            Juara Satuan Panjang! 🏆
           </h2>
-          <p id="result-subtitle" class="text-sm sm:text-base font-bold text-slate-600 max-w-md mx-auto">
-            Kamu luar biasa! Kiko si kelinci bangga sekali dengan kemampuan berhitungmu!
+          <p id="result-subtitle" class="text-sm sm:text-base text-slate-600 font-bold max-w-lg mx-auto">
+            Kamu luar biasa! Kiko si kelinci bangga sekali dengan ketelitianmu!
           </p>
         </div>
 
-        <!-- Statistik Rapor -->
-        <div class="grid grid-cols-3 gap-2.5 sm:gap-4 pt-2">
-          <div class="bg-sky-50 border-2 border-sky-200 rounded-2xl p-3 sm:p-4">
-            <div class="text-xs font-extrabold text-sky-700 uppercase">Total Skor</div>
-            <div id="result-score" class="font-display font-bold text-2xl sm:text-3xl text-sky-900 mt-1">100</div>
+        <!-- Ringkasan Statistik -->
+        <div class="grid grid-cols-3 gap-3 max-w-lg mx-auto">
+          <div class="bg-amber-50 rounded-2xl p-3.5 border-2 border-amber-200">
+            <div class="text-xs font-extrabold text-amber-700">Total Skor</div>
+            <div id="result-score" class="text-2xl sm:text-3xl font-display font-bold text-amber-900">100</div>
           </div>
-          <div class="bg-emerald-50 border-2 border-emerald-200 rounded-2xl p-3 sm:p-4">
-            <div class="text-xs font-extrabold text-emerald-700 uppercase">Benar</div>
-            <div id="result-correct" class="font-display font-bold text-2xl sm:text-3xl text-emerald-900 mt-1">10/10</div>
+          <div class="bg-emerald-50 rounded-2xl p-3.5 border-2 border-emerald-200">
+            <div class="text-xs font-extrabold text-emerald-700">Jawaban Benar</div>
+            <div id="result-correct" class="text-2xl sm:text-3xl font-display font-bold text-emerald-900">10/10</div>
           </div>
-          <div class="bg-orange-50 border-2 border-orange-200 rounded-2xl p-3 sm:p-4">
-            <div class="text-xs font-extrabold text-orange-700 uppercase">Streak Terbaik</div>
-            <div id="result-best-streak" class="font-display font-bold text-2xl sm:text-3xl text-orange-900 mt-1">🔥 10</div>
+          <div class="bg-rose-50 rounded-2xl p-3.5 border-2 border-rose-200">
+            <div class="text-xs font-extrabold text-rose-700">Streak Terbaik</div>
+            <div id="result-best-streak" class="text-2xl sm:text-3xl font-display font-bold text-rose-900">🔥 5</div>
           </div>
         </div>
 
         <!-- Tombol Aksi Akhir -->
-        <div class="pt-3 flex flex-col sm:flex-row gap-3">
-          <button onclick="app.startQuiz()" class="btn-tactile flex-1 py-3.5 px-5 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white border-b-4 border-sky-700 font-display font-bold text-lg flex items-center justify-center gap-2">
-            <span>🔄</span>
-            <span>Main Lagi</span>
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+          <button type="button" id="btn-next-level" onclick="app.nextLevel()" class="btn-tactile w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white font-display font-bold text-lg border-b-4 border-indigo-800 shadow-md">
+            🚀 Naik ke Level Berikutnya (+2 Tangga)
           </button>
 
-          <button id="btn-next-level" onclick="app.nextLevelAndPlay()" class="btn-tactile flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-amber-400 to-orange-500 hover:brightness-105 text-white border-b-4 border-orange-700 font-display font-bold text-lg flex items-center justify-center gap-2">
-            <span>Naik Level</span>
-            <span>🚀</span>
+          <button type="button" onclick="app.retryLevel()" class="btn-tactile w-full sm:w-auto px-6 py-3.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-white font-display font-bold text-lg border-b-4 border-emerald-700 shadow-md">
+            🔄 Main Lagi Level Ini
           </button>
 
-          <button onclick="app.goHome()" class="btn-tactile py-3.5 px-5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 border-b-4 border-slate-300 font-display font-bold text-lg flex items-center justify-center gap-2">
-            <span>🏠</span>
-            <span class="sm:hidden">Menu Utama</span>
+          <button type="button" onclick="app.goHome()" class="btn-tactile w-full sm:w-auto px-5 py-3.5 rounded-2xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-base border-b-4 border-slate-400">
+            🏠 Pilih Level Lain
           </button>
         </div>
       </div>
@@ -685,102 +528,76 @@
 
   </main>
 
-  <!-- ========================================================= -->
-  <!-- LOGIKA JAVASCRIPT LENGKAP                                 -->
-  <!-- ========================================================= -->
+  <!-- Footer Kecil -->
+  <footer class="relative z-10 text-center py-3 px-4 text-xs font-bold text-slate-500">
+    Petualangan Satuan Panjang • Belajar Tangga km – mm dengan Angka Pokok 1–10 🐰
+  </footer>
+
+  <!-- =========================================================
+       LOGIKA INTERAKTIF, SUARA MERIAH, SUARA KATA-KATA & KUIS
+  ========================================================== -->
   <script>
     /**
-     * 1. DATA KONSTANTA SATUAN PANJANG & FORMAT ANGKA INDONESIA
+     * 1. DATA TANGGA SATUAN PANJANG & UTILITAS FORMAT ANGKA INDONESIA
      */
     const LENGTH_UNITS = [
-      { id: 'km',  name: 'kilometer',  index: 0, bg: 'bg-rose-400',    border: 'border-rose-600',    text: 'text-rose-950' },
-      { id: 'hm',  name: 'hektometer', index: 1, bg: 'bg-orange-400',  border: 'border-orange-600',  text: 'text-orange-950' },
-      { id: 'dam', name: 'dekameter',  index: 2, bg: 'bg-amber-400',   border: 'border-amber-600',   text: 'text-amber-950' },
-      { id: 'm',   name: 'meter',      index: 3, bg: 'bg-emerald-400', border: 'border-emerald-600', text: 'text-emerald-950' },
-      { id: 'dm',  name: 'desimeter',  index: 4, bg: 'bg-sky-400',     border: 'border-sky-600',     text: 'text-sky-950' },
-      { id: 'cm',  name: 'sentimeter', index: 5, bg: 'bg-indigo-400',  border: 'border-indigo-600',  text: 'text-indigo-950' },
-      { id: 'mm',  name: 'milimeter',  index: 6, bg: 'bg-purple-400',  border: 'border-purple-600',  text: 'text-purple-950' }
+      { id: 'km',  name: 'Kilometer',  color: 'bg-rose-500 border-rose-700 text-white' },
+      { id: 'hm',  name: 'Hektometer', color: 'bg-orange-500 border-orange-700 text-white' },
+      { id: 'dam', name: 'Dekameter',  color: 'bg-amber-500 border-amber-700 text-white' },
+      { id: 'm',   name: 'Meter',      color: 'bg-emerald-500 border-emerald-700 text-white' },
+      { id: 'dm',  name: 'Desimeter',  color: 'bg-teal-500 border-teal-700 text-white' },
+      { id: 'cm',  name: 'Sentimeter', color: 'bg-sky-500 border-sky-700 text-white' },
+      { id: 'mm',  name: 'Milimeter',  color: 'bg-indigo-500 border-indigo-700 text-white' }
     ];
 
-    /**
-     * Konfigurasi 4 Level bertahap (+2 tangga di setiap level)
-     */
-    const LEVEL_CONFIGS = {
-      1: {
-        level: 1,
-        title: 'Level 1 — Pemula',
-        badge: '2 Tangga',
-        minIdx: 3, // m
-        maxIdx: 5, // cm (rentang 2 anak tangga: m -> dm -> cm)
-        rangeLabel: 'm – dm – cm (2 Tangga)'
-      },
-      2: {
-        level: 2,
-        title: 'Level 2 — Penjelajah',
-        badge: '4 Tangga (+2)',
-        minIdx: 2, // dam
-        maxIdx: 6, // mm (rentang 4 anak tangga: dam -> m -> dm -> cm -> mm)
-        rangeLabel: 'dam – m – dm – cm – mm (4 Tangga)'
-      },
-      3: {
-        level: 3,
-        title: 'Level 3 — Petualang',
-        badge: '6 Tangga (+2)',
-        minIdx: 0, // km
-        maxIdx: 6, // mm (rentang 6 anak tangga penuh: km -> mm)
-        rangeLabel: 'km – hm – dam – m – dm – cm – mm (6 Tangga Penuh)'
-      },
-      4: {
-        level: 4,
-        title: 'Level 4 — Juara Tangga & Cerita',
-        badge: '6 Tangga + Cerita',
-        minIdx: 0, // km
-        maxIdx: 6, // mm (6 anak tangga penuh + operasi & soal cerita)
-        rangeLabel: 'km – hm – dam – m – dm – cm – mm (6 Tangga Penuh)'
-      }
-    };
-
-    const BASE_NUMBERS_1_TO_10 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-    /**
-     * Memformat angka menjadi format Indonesia (titik pemisah ribuan, koma desimal)
-     */
     function formatIndoNumber(num) {
       if (num === null || num === undefined || isNaN(num)) return '0';
-      const rounded = Math.round(num * 1000000) / 1000000;
-      const parts = String(rounded).split('.');
-      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-      return parts.join(',');
+      return Math.round(num).toLocaleString('id-ID');
     }
 
-    /**
-     * Mengubah teks input angka anak menjadi nilai numerik
-     */
-    function parseIndoInput(raw) {
-      if (!raw) return NaN;
-      const cleaned = String(raw).trim().replace(/\./g, '').replace(',', '.');
-      if (!/^\d+(\.\d+)?$/.test(cleaned)) return NaN;
-      return parseFloat(cleaned);
+    function parseIndoInput(rawStr) {
+      if (!rawStr) return NaN;
+      const digitsOnly = String(rawStr).replace(/\D/g, '');
+      return digitsOnly ? parseInt(digitsOnly, 10) : NaN;
     }
 
-    /**
-     * Menghitung konversi nilai antar indeks tangga satuan panjang
-     */
     function convertUnitValue(val, fromIdx, toIdx) {
       const diff = toIdx - fromIdx;
-      const factor = Math.pow(10, Math.abs(diff));
       if (diff === 0) return val;
-      const raw = diff > 0 ? val * factor : val / factor;
-      return Math.round(raw * 1000000) / 1000000;
+      if (diff > 0) {
+        return val * Math.pow(10, diff);
+      }
+      return Math.round(val / Math.pow(10, Math.abs(diff)));
     }
 
     /**
-     * 2. EFEK SUARA CERIA RAMAH ANAK (WEB AUDIO API TANPA URL EKSTERNAL)
+     * 2. EFEK SUARA MERIAH & SUARA KATA-KATA BAHASA INDONESIA
      */
     class SoundManager {
       constructor() {
         this.ctx = null;
         this.muted = false;
+        this.indonesianVoice = null;
+        this.lastSpokenText = '';
+        this.initVoices();
+      }
+
+      initVoices() {
+        if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+        const pickVoice = () => {
+          try {
+            const voices = window.speechSynthesis.getVoices() || [];
+            this.indonesianVoice =
+              voices.find(v => v.lang && v.lang.toLowerCase() === 'id-id') ||
+              voices.find(v => v.lang && v.lang.toLowerCase().startsWith('id')) ||
+              voices.find(v => v.name && /indonesia/i.test(v.name)) ||
+              null;
+          } catch (e) {}
+        };
+        pickVoice();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+          window.speechSynthesis.onvoiceschanged = pickVoice;
+        }
       }
 
       initCtx() {
@@ -795,14 +612,94 @@
         }
       }
 
+      stopSpeech() {
+        if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+          try {
+            window.speechSynthesis.cancel();
+          } catch (e) {}
+        }
+      }
+
+      formatTextForSpeech(text) {
+        if (!text) return '';
+        let spoken = String(text);
+
+        // Hapus titik pemisah ribuan agar dibaca sebagai bilangan utuh
+        while (/(\d)\.(\d{3})/.test(spoken)) {
+          spoken = spoken.replace(/(\d)\.(\d{3})/g, '$1$2');
+        }
+
+        spoken = spoken
+          .replace(/=\s*\.\.\./g, ' sama dengan berapa ')
+          .replace(/\.\.\./g, ' berapa ')
+          .replace(/=/g, ' sama dengan ')
+          .replace(/\+/g, ' ditambah ')
+          .replace(/−/g, ' dikurang ')
+          .replace(/\s-\s/g, ' dikurang ')
+          .replace(/×/g, ' dikali ')
+          .replace(/÷/g, ' dibagi ');
+
+        const unitNames = {
+          km: 'kilometer',
+          hm: 'hektometer',
+          dam: 'dekameter',
+          dm: 'desimeter',
+          cm: 'sentimeter',
+          mm: 'milimeter',
+          m: 'meter'
+        };
+        spoken = spoken.replace(/\b(km|hm|dam|dm|cm|mm|m)\b/g, (match) => unitNames[match] || match);
+
+        return spoken.replace(/\s+/g, ' ').trim();
+      }
+
+      speak(rawText, delayMs = 0) {
+        if (this.muted) return;
+        if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
+
+        const cleanText = this.formatTextForSpeech(rawText);
+        if (!cleanText) return;
+        this.lastSpokenText = cleanText;
+
+        this.stopSpeech();
+
+        const runSpeak = () => {
+          if (this.muted) return;
+          try {
+            if (!this.indonesianVoice) {
+              this.initVoices();
+            }
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'id-ID';
+            if (this.indonesianVoice) {
+              utterance.voice = this.indonesianVoice;
+            }
+            utterance.pitch = 1.14;
+            utterance.rate = 0.98;
+            utterance.volume = 1.0;
+            window.speechSynthesis.speak(utterance);
+          } catch (e) {}
+        };
+
+        if (delayMs > 0) {
+          setTimeout(runSpeak, delayMs);
+        } else {
+          runSpeak();
+        }
+      }
+
       toggle() {
         this.muted = !this.muted;
         const btn = document.getElementById('btn-sound-toggle');
         if (btn) {
           btn.textContent = this.muted ? '🔇' : '🔊';
+          btn.title = this.muted ? 'Suara Dimatikan' : 'Suara Aktif';
         }
-        if (!this.muted) {
+        if (this.muted) {
+          this.stopSpeech();
+        } else {
           this.playClick();
+          this.speak('Suara aktif! Ayo belajar bersama Kiko!');
         }
       }
 
@@ -828,294 +725,284 @@
 
           osc.start(now);
           osc.stop(now + duration + 0.02);
-        } catch (e) {
-          // Abaikan jika browser membatasi audio sebelum interaksi
-        }
+        } catch (e) {}
       }
 
       playClick() {
-        this.playTone(520, 0.08, 'triangle', 0.12, 0);
+        this.playTone(540, 0.08, 'triangle', 0.12, 0);
       }
 
       playHop(stepIndex = 0) {
-        const pitch = 380 + (stepIndex % 7) * 55;
+        const pitch = 390 + (stepIndex % 7) * 55;
         this.playTone(pitch, 0.11, 'sine', 0.14, 0);
       }
 
-      playCorrect() {
-        this.playTone(523.25, 0.14, 'triangle', 0.16, 0);     // C5
-        this.playTone(659.25, 0.14, 'triangle', 0.16, 0.09);  // E5
-        this.playTone(783.99, 0.24, 'triangle', 0.18, 0.18);  // G5
+      /**
+       * Efek suara meriah (fanfare naik + kilau bintang + tepuk sorak) + ucapan pujian
+       */
+      playCorrect(cheerPhrase = 'Masya Allah!', streak = 1) {
+        // Fanfare naik ceria
+        this.playTone(523.25, 0.13, 'triangle', 0.18, 0);     // C5
+        this.playTone(659.25, 0.13, 'triangle', 0.18, 0.08);  // E5
+        this.playTone(783.99, 0.15, 'triangle', 0.19, 0.16);  // G5
+        this.playTone(1046.5, 0.30, 'triangle', 0.22, 0.24);  // C6
+        // Akor pengiring hangat
+        this.playTone(523.25, 0.28, 'sine', 0.10, 0.24);
+        this.playTone(659.25, 0.28, 'sine', 0.10, 0.24);
+        // Kilau bintang tinggi
+        this.playTone(1318.5, 0.18, 'sine', 0.13, 0.32);      // E6
+        this.playTone(1567.98, 0.25, 'sine', 0.13, 0.40);     // G6
+        this.playTone(2093.0, 0.22, 'sine', 0.10, 0.48);      // C7
+
+        const extraStreak = streak >= 3 ? ` Hebat, ${streak} kali benar berturut-turut!` : '';
+        const speechMsg = cheerPhrase
+          ? `${cheerPhrase} Jawabanmu benar!${extraStreak}`
+          : `Masya Allah! Jawabanmu benar!${extraStreak}`;
+        this.speak(speechMsg, 460);
       }
 
-      playWrong() {
-        this.playTone(260, 0.16, 'sine', 0.14, 0);
-        this.playTone(210, 0.22, 'sine', 0.14, 0.14);
+      /**
+       * Efek suara kartun menurun (tet-tot) + ucapan penyemangat saat jawaban SALAH
+       */
+      playWrong(correctAnswerText = '') {
+        this.playTone(329.63, 0.17, 'sawtooth', 0.11, 0);     // E4
+        this.playTone(311.13, 0.17, 'sawtooth', 0.11, 0.15);  // Eb4
+        this.playTone(261.63, 0.34, 'triangle', 0.15, 0.30);  // C4
+
+        const speechMsg = correctAnswerText
+          ? `Tet tot! Hampir tepat. Jawaban yang benar adalah ${correctAnswerText}. Tetap semangat ya!`
+          : `Tet tot! Ayo isi angkanya dulu ya!`;
+        this.speak(speechMsg, 450);
       }
 
-      playFanfare() {
-        const notes = [523.25, 659.25, 783.99, 1046.5];
+      playFanfare(spokenSummary = '') {
+        const notes = [523.25, 659.25, 783.99, 1046.5, 1318.5];
         notes.forEach((n, idx) => {
-          this.playTone(n, 0.22, 'triangle', 0.16, idx * 0.11);
+          this.playTone(n, 0.24, 'triangle', 0.18, idx * 0.11);
         });
+        if (spokenSummary) {
+          this.speak(spokenSummary, 600);
+        }
       }
     }
 
-    const soundFX = new SoundManager();
-
     /**
-     * 3. KOMPONEN TANGGA SATUAN PANJANG INTERAKTIF (VISUAL & ANIMASI KELINCI)
+     * 3. KOMPONEN VISUAL TANGGA SATUAN + MASKOT KELINCI KIKO
      */
-    const staircaseRegistry = {};
-
-    window.__staircaseClick = function(mountId, idx) {
-      const widget = staircaseRegistry[mountId];
-      if (widget && widget.interactive && typeof widget.onStepClick === 'function') {
-        widget.onStepClick(idx);
-      }
-    };
-
     class StaircaseWidget {
-      constructor(mountId, options = {}) {
-        this.mountId = mountId;
-        this.interactive = options.interactive || false;
+      constructor(containerId, options = {}) {
+        this.container = document.getElementById(containerId);
+        this.interactive = Boolean(options.interactive);
         this.onStepClick = options.onStepClick || null;
-        this.fromIdx = 3; // m
-        this.toIdx = 5;   // cm
-        this.activeMinIdx = options.activeMinIdx !== undefined ? options.activeMinIdx : 0;
-        this.activeMaxIdx = options.activeMaxIdx !== undefined ? options.activeMaxIdx : 6;
         this.currentBunnyIdx = 3;
         this.animTimer = null;
         this.render();
       }
 
-      setActiveRange(minIdx, maxIdx) {
-        this.activeMinIdx = minIdx;
-        this.activeMaxIdx = maxIdx;
-        this.updateHighlights(this.fromIdx, this.toIdx);
-      }
-
       render() {
-        const mount = document.getElementById(this.mountId);
-        if (!mount) return;
+        if (!this.container) return;
+        let html = '<div class="flex flex-col gap-1.5 py-1">';
 
-        // Bangun 7 anak tangga responsif tanpa scroll horizontal
-        let stepsHTML = '';
-        LENGTH_UNITS.forEach((u, idx) => {
-          const stepBottomPx = (6 - idx) * 20; // Setiap tangga turun 20px
+        LENGTH_UNITS.forEach((unit, idx) => {
+          const indentPx = idx * 20;
           const cursorClass = this.interactive ? 'cursor-pointer hover:brightness-105' : '';
-          stepsHTML += `
-            <div class="relative flex-1 h-full flex flex-col justify-end select-none" data-step-col="${idx}">
-              <!-- Label Asal / Tujuan di atas anak tangga -->
-              <div id="${this.mountId}-tag-${idx}" class="hidden absolute left-1/2 -translate-x-1/2 z-20 px-1.5 py-0.5 rounded-md text-[10px] sm:text-xs font-extrabold whitespace-nowrap shadow-sm" style="bottom: ${stepBottomPx + 42}px;">
-              </div>
-
-              <!-- Balok Anak Tangga -->
-              <div onclick="window.__staircaseClick('${this.mountId}', ${idx})"
-                   id="${this.mountId}-step-${idx}"
-                   style="height: ${stepBottomPx + 38}px;"
-                   class="${cursorClass} w-full rounded-t-xl ${u.bg} border-t-4 border-x-2 ${u.border} flex flex-col items-center justify-start pt-1.5 transition-all duration-200 shadow-inner relative">
-                <span class="font-display font-bold text-xs sm:text-base md:text-lg text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.45)] tracking-tight">
-                  ${u.id}
-                </span>
-                <span class="hidden sm:block text-[9px] font-extrabold text-white/90 leading-none mt-0.5">
-                  ${u.name}
-                </span>
+          html += `
+            <div class="flex items-center" style="padding-left: ${indentPx}px;">
+              <div
+                data-step-idx="${idx}"
+                class="stair-step relative flex items-center justify-between px-3 py-1.5 rounded-xl border-b-4 shadow-xs transition-all duration-200 min-w-[140px] sm:min-w-[165px] ${unit.color} ${cursorClass}"
+              >
+                <div class="flex items-center gap-2">
+                  <span class="font-display font-bold text-sm sm:text-base tracking-wide">${unit.id}</span>
+                  <span class="text-[11px] opacity-90 font-bold hidden sm:inline">(${unit.name})</span>
+                </div>
+                <span class="stair-badge text-[10px] font-black px-1.5 py-0.5 rounded-md bg-black/20 hidden"></span>
+                <span class="bunny-slot text-xl sm:text-2xl leading-none ml-1"></span>
               </div>
             </div>
           `;
         });
 
-        mount.innerHTML = `
-          <div class="bg-gradient-to-b from-sky-100/80 to-emerald-50/90 border-2 border-sky-200 rounded-2xl pt-9 pb-2 px-2 sm:px-3 relative overflow-hidden">
-            <!-- Petunjuk Arah Atas -->
-            <div class="flex items-center justify-between text-[11px] sm:text-xs font-extrabold px-1 mb-1">
-              <span class="text-orange-700 bg-orange-100/90 px-2 py-0.5 rounded-full">⬆️ Naik 1 tangga = ÷ 10</span>
-              <span class="text-emerald-700 bg-emerald-100/90 px-2 py-0.5 rounded-full">⬇️ Turun 1 tangga = × 10</span>
-            </div>
+        html += '</div>';
+        this.container.innerHTML = html;
 
-            <!-- Arena 7 Anak Tangga + Maskot Kelinci Kiko -->
-            <div class="relative w-full h-[215px] flex items-end gap-1 sm:gap-1.5 pt-8">
-              <!-- Maskot Kelinci Kiko -->
-              <div id="${this.mountId}-bunny"
-                   style="left: 50%; bottom: 98px; transform: translateX(-50%);"
-                   class="absolute z-30 pointer-events-none transition-all duration-300 ease-out flex flex-col items-center">
-                <div id="${this.mountId}-bunny-sprite" class="text-2xl sm:text-3xl drop-shadow-md leading-none">
-                  🐰
-                </div>
-              </div>
-
-              ${stepsHTML}
-            </div>
-          </div>
-        `;
+        if (this.interactive && this.onStepClick) {
+          this.container.querySelectorAll('.stair-step').forEach((el) => {
+            el.addEventListener('click', () => {
+              const idx = parseInt(el.getAttribute('data-step-idx'), 10);
+              this.onStepClick(idx);
+            });
+          });
+        }
 
         this.placeBunnyAt(this.currentBunnyIdx, false);
-        this.updateHighlights(this.fromIdx, this.toIdx);
       }
 
-      placeBunnyAt(idx, hopAnim = false) {
+      updateHighlights(fromIdx, toIdx) {
+        if (!this.container) return;
+        this.container.querySelectorAll('.stair-step').forEach((el) => {
+          const idx = parseInt(el.getAttribute('data-step-idx'), 10);
+          const badge = el.querySelector('.stair-badge');
+          el.classList.remove('ring-4', 'ring-yellow-300', 'ring-emerald-300', 'scale-[1.03]');
+          if (badge) {
+            badge.classList.add('hidden');
+            badge.textContent = '';
+          }
+
+          if (idx === fromIdx && idx === toIdx) {
+            el.classList.add('ring-4', 'ring-yellow-300', 'scale-[1.03]');
+            if (badge) {
+              badge.textContent = 'Tetap';
+              badge.classList.remove('hidden');
+            }
+          } else if (idx === fromIdx) {
+            el.classList.add('ring-4', 'ring-yellow-300');
+            if (badge) {
+              badge.textContent = 'Awal';
+              badge.classList.remove('hidden');
+            }
+          } else if (idx === toIdx) {
+            el.classList.add('ring-4', 'ring-emerald-300', 'scale-[1.03]');
+            if (badge) {
+              badge.textContent = 'Tujuan';
+              badge.classList.remove('hidden');
+            }
+          }
+        });
+      }
+
+      placeBunnyAt(idx, animate = true) {
+        if (!this.container) return;
         this.currentBunnyIdx = idx;
-        const bunnyEl = document.getElementById(`${this.mountId}-bunny`);
-        const spriteEl = document.getElementById(`${this.mountId}-bunny-sprite`);
-        if (!bunnyEl || !spriteEl) return;
+        this.container.querySelectorAll('.bunny-slot').forEach((slot) => {
+          slot.innerHTML = '';
+        });
 
-        const leftPercent = ((idx + 0.5) / 7) * 100;
-        const stepHeightPx = (6 - idx) * 20 + 38;
-
-        bunnyEl.style.left = `${leftPercent}%`;
-        bunnyEl.style.bottom = `${stepHeightPx + 2}px`;
-
-        if (hopAnim) {
-          spriteEl.classList.remove('bunny-hop-anim');
-          void spriteEl.offsetWidth;
-          spriteEl.classList.add('bunny-hop-anim');
+        const targetStep = this.container.querySelector(`.stair-step[data-step-idx="${idx}"] .bunny-slot`);
+        if (targetStep) {
+          targetStep.innerHTML = `<span class="inline-block ${animate ? 'animate-bunny-hop' : ''}">🐰</span>`;
         }
       }
 
-      animateJourney(fromIdx, toIdx, withSound = true) {
+      animateJourney(fromIdx, toIdx, playHopSound = true) {
         if (this.animTimer) {
           clearInterval(this.animTimer);
           this.animTimer = null;
         }
 
         this.updateHighlights(fromIdx, toIdx);
-        this.placeBunnyAt(fromIdx, false);
+        this.placeBunnyAt(fromIdx, true);
 
-        if (fromIdx === toIdx) return;
+        if (fromIdx === toIdx) {
+          if (playHopSound) soundFX.playHop(fromIdx);
+          return;
+        }
 
-        const direction = toIdx > fromIdx ? 1 : -1;
+        const stepDir = toIdx > fromIdx ? 1 : -1;
         let current = fromIdx;
+        if (playHopSound) soundFX.playHop(current);
 
         this.animTimer = setInterval(() => {
-          current += direction;
+          current += stepDir;
           this.placeBunnyAt(current, true);
-          if (withSound) {
-            soundFX.playHop(current);
-          }
+          if (playHopSound) soundFX.playHop(current);
+
           if (current === toIdx) {
             clearInterval(this.animTimer);
             this.animTimer = null;
           }
-        }, 320);
-      }
-
-      updateHighlights(fromIdx, toIdx) {
-        this.fromIdx = fromIdx;
-        this.toIdx = toIdx;
-        const routeLow = Math.min(fromIdx, toIdx);
-        const routeHigh = Math.max(fromIdx, toIdx);
-
-        LENGTH_UNITS.forEach((_, idx) => {
-          const stepEl = document.getElementById(`${this.mountId}-step-${idx}`);
-          const tagEl = document.getElementById(`${this.mountId}-tag-${idx}`);
-          if (!stepEl || !tagEl) return;
-
-          const isInLevelRange = idx >= this.activeMinIdx && idx <= this.activeMaxIdx;
-          const isOnRoute = idx >= routeLow && idx <= routeHigh;
-
-          stepEl.classList.remove(
-            'ring-4', 'ring-emerald-400', 'ring-amber-400', 'ring-sky-400',
-            'ring-2', 'ring-white/80', 'brightness-110', 'opacity-30', 'grayscale'
-          );
-          tagEl.className = 'hidden absolute left-1/2 -translate-x-1/2 z-20 px-1.5 py-0.5 rounded-md text-[10px] font-extrabold whitespace-nowrap shadow-sm';
-
-          if (!isInLevelRange) {
-            stepEl.classList.add('opacity-30', 'grayscale');
-          } else if (isOnRoute && idx !== fromIdx && idx !== toIdx) {
-            stepEl.classList.add('ring-2', 'ring-white/80', 'brightness-105');
-          }
-
-          if (idx === fromIdx && idx === toIdx) {
-            stepEl.classList.add('ring-4', 'ring-sky-400', 'brightness-110');
-            tagEl.textContent = 'Mulai & Tujuan';
-            tagEl.classList.remove('hidden');
-            tagEl.classList.add('bg-sky-600', 'text-white');
-          } else if (idx === fromIdx) {
-            stepEl.classList.add('ring-4', 'ring-emerald-400', 'brightness-110');
-            tagEl.textContent = 'Mulai';
-            tagEl.classList.remove('hidden');
-            tagEl.classList.add('bg-emerald-600', 'text-white');
-          } else if (idx === toIdx) {
-            stepEl.classList.add('ring-4', 'ring-amber-400', 'brightness-110');
-            tagEl.textContent = 'Tujuan';
-            tagEl.classList.remove('hidden');
-            tagEl.classList.add('bg-orange-500', 'text-white');
-          }
-        });
+        }, 300);
       }
     }
 
     /**
-     * 4. PENGENDALI MODE EKSPLORASI TANGGA
+     * 4. PENGENDALI MODE BELAJAR TANGGA INTERAKTIF
      */
-    class ExplorerController {
+    class StaircaseExplorer {
       constructor() {
-        this.value = 2;
+        this.value = 3;
         this.fromIdx = 3; // m
         this.toIdx = 5;   // cm
         this.widget = null;
       }
 
       init() {
-        const fromSel = document.getElementById('explorer-from-select');
-        const toSel = document.getElementById('explorer-to-select');
-        if (fromSel && toSel) {
-          const opts = LENGTH_UNITS.map((u, i) => `<option value="${i}">${u.id} (${u.name})</option>`).join('');
-          fromSel.innerHTML = opts;
-          toSel.innerHTML = opts;
-          fromSel.value = this.fromIdx;
-          toSel.value = this.toIdx;
-        }
-
-        this.widget = new StaircaseWidget('explorer-staircase-mount', {
+        this.renderNumberButtons();
+        this.populateSelects();
+        this.widget = new StaircaseWidget('explorer-staircase-container', {
           interactive: true,
-          activeMinIdx: 0,
-          activeMaxIdx: 6,
           onStepClick: (idx) => this.handleStepTap(idx)
         });
-        staircaseRegistry['explorer-staircase-mount'] = this.widget;
-        this.updatePresetButtons();
-        this.updateCalculation(true);
+        this.updateCalculation(true, false);
+      }
+
+      renderNumberButtons() {
+        const wrap = document.getElementById('explorer-number-buttons');
+        if (!wrap) return;
+        let html = '';
+        for (let n = 1; n <= 10; n++) {
+          const active = n === this.value;
+          html += `
+            <button
+              type="button"
+              onclick="explorer.setNumber(${n})"
+              data-exp-num="${n}"
+              class="btn-tactile w-8 h-8 sm:w-9 sm:h-9 rounded-xl font-display font-bold text-sm sm:text-base border-b-2 ${
+                active
+                  ? 'bg-sky-500 text-white border-sky-700'
+                  : 'bg-white text-slate-700 border-slate-300 hover:bg-sky-100'
+              }"
+            >${n}</button>
+          `;
+        }
+        wrap.innerHTML = html;
+      }
+
+      populateSelects() {
+        const fromSel = document.getElementById('explorer-from-select');
+        const toSel = document.getElementById('explorer-to-select');
+        if (!fromSel || !toSel) return;
+
+        const optionsHtml = LENGTH_UNITS.map(
+          (u, idx) => `<option value="${idx}">${u.id} (${u.name})</option>`
+        ).join('');
+
+        fromSel.innerHTML = optionsHtml;
+        toSel.innerHTML = optionsHtml;
+        fromSel.value = String(this.fromIdx);
+        toSel.value = String(this.toIdx);
       }
 
       handleStepTap(idx) {
         this.toIdx = idx;
-        document.getElementById('explorer-to-select').value = idx;
-        this.updateCalculation(true);
+        const toSel = document.getElementById('explorer-to-select');
+        if (toSel) toSel.value = String(idx);
+        this.updateCalculation(true, true);
       }
 
       setNumber(num) {
         soundFX.playClick();
         this.value = num;
-        this.updatePresetButtons();
-        this.updateCalculation(true);
-      }
-
-      updatePresetButtons() {
-        document.querySelectorAll('#explorer-presets .preset-btn').forEach(btn => {
-          const n = parseInt(btn.getAttribute('data-num'), 10);
-          if (n === this.value) {
-            btn.className = 'preset-btn btn-tactile py-1.5 rounded-xl bg-sky-500 border-2 border-sky-600 font-display font-bold text-base text-white shadow-sm';
-          } else {
-            btn.className = 'preset-btn btn-tactile py-1.5 rounded-xl bg-white border-2 border-sky-300 font-display font-bold text-base text-sky-900 hover:bg-sky-100';
-          }
-        });
+        this.renderNumberButtons();
+        this.updateCalculation(true, true);
       }
 
       onSelectChange() {
         soundFX.playClick();
         this.fromIdx = parseInt(document.getElementById('explorer-from-select').value, 10);
         this.toIdx = parseInt(document.getElementById('explorer-to-select').value, 10);
-        this.updateCalculation(true);
+        this.updateCalculation(true, true);
       }
 
       replayJump() {
         soundFX.playClick();
-        this.widget.animateJourney(this.fromIdx, this.toIdx, true);
+        if (this.widget) {
+          this.widget.animateJourney(this.fromIdx, this.toIdx, true);
+        }
+        this.speakCurrentConversion();
       }
 
-      updateCalculation(animate = true) {
+      speakCurrentConversion() {
         const fromUnit = LENGTH_UNITS[this.fromIdx];
         const toUnit = LENGTH_UNITS[this.toIdx];
         const diff = this.toIdx - this.fromIdx;
@@ -1123,385 +1010,283 @@
         const factor = Math.pow(10, steps);
         const result = convertUnitValue(this.value, this.fromIdx, this.toIdx);
 
-        if (animate) {
-          this.widget.animateJourney(this.fromIdx, this.toIdx, true);
-        } else {
-          this.widget.updateHighlights(this.fromIdx, this.toIdx);
-        }
-
-        const expBox = document.getElementById('explorer-explanation');
-        if (!expBox) return;
-
-        let badgeSummary = '';
-        let stepText = '';
         if (diff === 0) {
-          badgeSummary = '0 Tangga = Tetap (× 1)';
-          stepText = `Satuan asal dan tujuan sama (<strong>${fromUnit.id}</strong>), sehingga nilainya tetap <strong>${formatIndoNumber(result)} ${toUnit.id}</strong>.`;
+          soundFX.speak(`${formatIndoNumber(this.value)} ${fromUnit.id} sama dengan ${formatIndoNumber(result)} ${toUnit.id}.`);
         } else if (diff > 0) {
-          badgeSummary = `Turun ${steps} tangga = × ${formatIndoNumber(factor)}`;
-          stepText = `Dari <strong>${fromUnit.id}</strong> ke <strong>${toUnit.id}</strong> Kiko <strong>turun ${steps} tangga</strong>. Setiap turun 1 tangga dikali 10, jadi total dikali <strong>${formatIndoNumber(factor)}</strong>:<br/>
-          <span class="inline-block mt-1.5 px-3 py-1 rounded-xl bg-white border-2 border-emerald-300 text-emerald-900 font-extrabold">Contoh soal: ${formatIndoNumber(this.value)} ${fromUnit.id} = ${formatIndoNumber(this.value)} × ${formatIndoNumber(factor)} = ${formatIndoNumber(result)} ${toUnit.id}</span>`;
+          soundFX.speak(`${formatIndoNumber(this.value)} ${fromUnit.id} sama dengan ${formatIndoNumber(result)} ${toUnit.id}. Turun ${steps} tangga, dikali ${formatIndoNumber(factor)}.`, 450);
         } else {
-          badgeSummary = `Naik ${steps} tangga = ÷ ${formatIndoNumber(factor)}`;
-          stepText = `Dari <strong>${fromUnit.id}</strong> ke <strong>${toUnit.id}</strong> Kiko <strong>naik ${steps} tangga</strong>. Setiap naik 1 tangga dibagi 10, jadi total dibagi <strong>${formatIndoNumber(factor)}</strong>:<br/>
-          <span class="inline-block mt-1.5 px-3 py-1 rounded-xl bg-white border-2 border-orange-300 text-orange-900 font-extrabold">Contoh soal: ${formatIndoNumber(this.value)} ${fromUnit.id} = ${formatIndoNumber(this.value)} ÷ ${formatIndoNumber(factor)} = ${formatIndoNumber(result)} ${toUnit.id}</span>`;
+          // Untuk naik tangga di eksplorasi, gunakan bilangan kelipatan 10^steps agar bulat
+          const startScaled = this.value * factor;
+          soundFX.speak(`${formatIndoNumber(startScaled)} ${fromUnit.id} sama dengan ${formatIndoNumber(this.value)} ${toUnit.id}. Naik ${steps} tangga, dibagi ${formatIndoNumber(factor)}.`, 450);
+        }
+      }
+
+      updateCalculation(animate = true, withVoice = false) {
+        const fromUnit = LENGTH_UNITS[this.fromIdx];
+        const toUnit = LENGTH_UNITS[this.toIdx];
+        const diff = this.toIdx - this.fromIdx;
+        const steps = Math.abs(diff);
+        const factor = Math.pow(10, steps);
+
+        const badge = document.getElementById('explorer-direction-badge');
+        const formulaEl = document.getElementById('explorer-formula-display');
+        const detailEl = document.getElementById('explorer-step-detail');
+
+        if (diff === 0) {
+          badge.className = 'inline-block px-3 py-1 rounded-full bg-slate-500 text-white text-xs font-extrabold';
+          badge.textContent = '⏸️ Satuan Sama (0 Tangga)';
+          formulaEl.textContent = `${formatIndoNumber(this.value)} ${fromUnit.id} = ${formatIndoNumber(this.value)} ${toUnit.id}`;
+          detailEl.textContent = `Karena satuannya sama, nilainya tetap ${formatIndoNumber(this.value)} ${toUnit.id}.`;
+        } else if (diff > 0) {
+          const result = this.value * factor;
+          badge.className = 'inline-block px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-extrabold';
+          badge.textContent = `⬇️ Turun ${steps} Tangga (× ${formatIndoNumber(factor)})`;
+          formulaEl.textContent = `${formatIndoNumber(this.value)} ${fromUnit.id} = ${formatIndoNumber(result)} ${toUnit.id}`;
+          detailEl.textContent = `Turun ${steps} anak tangga: ${formatIndoNumber(this.value)} × ${formatIndoNumber(factor)} = ${formatIndoNumber(result)} ${toUnit.id} (tambah ${steps} nol).`;
+        } else {
+          const startScaled = this.value * factor;
+          badge.className = 'inline-block px-3 py-1 rounded-full bg-amber-500 text-white text-xs font-extrabold';
+          badge.textContent = `⬆️ Naik ${steps} Tangga (÷ ${formatIndoNumber(factor)})`;
+          formulaEl.textContent = `${formatIndoNumber(startScaled)} ${fromUnit.id} = ${formatIndoNumber(this.value)} ${toUnit.id}`;
+          detailEl.textContent = `Naik ${steps} anak tangga: ${formatIndoNumber(startScaled)} ÷ ${formatIndoNumber(factor)} = ${formatIndoNumber(this.value)} ${toUnit.id} (hilangkan ${steps} nol).`;
         }
 
-        expBox.innerHTML = `
-          <div class="flex flex-wrap items-center justify-between gap-2">
-            <span class="px-3 py-1 rounded-full bg-amber-200 text-amber-950 font-extrabold text-xs sm:text-sm">
-              🪜 ${badgeSummary}
-            </span>
-            <span class="font-display font-bold text-lg sm:text-xl text-slate-900 bg-white px-3.5 py-1 rounded-xl border-2 border-amber-300 shadow-sm">
-              ${formatIndoNumber(this.value)} ${fromUnit.id} = <span class="text-emerald-600">${formatIndoNumber(result)} ${toUnit.id}</span>
-            </span>
-          </div>
-          <p class="text-xs sm:text-sm text-slate-700 font-bold leading-relaxed">${stepText}</p>
-        `;
+        if (this.widget) {
+          if (animate) {
+            this.widget.animateJourney(this.fromIdx, this.toIdx, true);
+          } else {
+            this.widget.updateHighlights(this.fromIdx, this.toIdx);
+          }
+        }
+
+        if (withVoice) {
+          this.speakCurrentConversion();
+        }
       }
     }
 
-    const explorer = new ExplorerController();
-
     /**
-     * 5. GENERATOR SOAL LATIHAN SD (4 LEVEL BERTAHAP +2 TANGGA, ANGKA DASAR 1-10)
+     * 5. GENERATOR SOAL LATIHAN SD (4 LEVEL +2 TANGGA, ANGKA POKOK 1-10)
      */
-    const QuestionGenerator = {
-      randInt(min, max) {
+    class QuestionGenerator {
+      static randInt(min, max) {
         return Math.floor(Math.random() * (max - min + 1)) + min;
-      },
+      }
 
-      pick(arr) {
+      static pickRandom(arr) {
         return arr[Math.floor(Math.random() * arr.length)];
-      },
+      }
 
-      /**
-       * Membuat 4 pilihan jawaban cerdas (1 benar + 3 pengecoh kelipatan 10)
-       */
-      generateDistractors(correctVal) {
+      static buildDistractors(correctVal) {
         const set = new Set([correctVal]);
-        const factors = [10, 100, 1000, 10000];
-        const candidates = [];
-
-        for (const f of factors) {
-          candidates.push(Math.round(correctVal * f));
-          if (correctVal >= f && correctVal % f === 0) {
-            candidates.push(Math.round(correctVal / f));
-          }
-        }
-        candidates.push(correctVal + 10, Math.max(1, correctVal - 10), correctVal + 1);
-
-        for (let i = candidates.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [candidates[i], candidates[j]] = [candidates[j], candidates[i]];
-        }
+        const candidates = [
+          correctVal * 10,
+          correctVal >= 10 ? Math.round(correctVal / 10) : correctVal + 10,
+          correctVal * 100,
+          correctVal >= 100 ? Math.round(correctVal / 100) : correctVal + 20,
+          correctVal + 1,
+          correctVal > 1 ? correctVal - 1 : correctVal + 2
+        ];
 
         for (const c of candidates) {
-          if (set.size < 4 && Number.isInteger(c) && c > 0 && c !== correctVal) {
+          if (c > 0 && c !== correctVal) {
             set.add(c);
+          }
+          if (set.size >= 4) break;
+        }
+
+        let filler = 1;
+        while (set.size < 4) {
+          const alt = correctVal + filler * 10;
+          if (!set.has(alt)) set.add(alt);
+          filler++;
+        }
+
+        return Array.from(set).sort(() => Math.random() - 0.5);
+      }
+
+      /**
+       * Buat 1 soal konversi murni dengan batas rentang tangga & langkah sesuai level
+       */
+      static createConversionQuestion(minIdx, maxIdx, preferredMinSteps, maxSteps) {
+        let fromIdx = 3;
+        let toIdx = 5;
+        let attempts = 0;
+
+        while (attempts < 40) {
+          attempts++;
+          const a = this.randInt(minIdx, maxIdx);
+          const b = this.randInt(minIdx, maxIdx);
+          const diff = Math.abs(b - a);
+          if (diff >= 1 && diff <= maxSteps) {
+            // Prioritaskan lompatan baru di level tersebut (70% peluang)
+            if (diff >= preferredMinSteps || Math.random() < 0.35) {
+              fromIdx = a;
+              toIdx = b;
+              break;
+            }
           }
         }
 
-        let safety = 2;
-        while (set.size < 4) {
-          const extra = correctVal * safety;
-          if (extra > 0) set.add(extra);
-          safety++;
-        }
-
-        const arr = Array.from(set);
-        for (let i = arr.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [arr[i], arr[j]] = [arr[j], arr[i]];
-        }
-        return arr;
-      },
-
-      /**
-       * Helper membangun soal konversi murni dalam rentang [minIdx, maxIdx]
-       * dengan jumlah lompatan `steps` dan bilangan pokok strictly 1..10
-       */
-      buildConversionQuestion({ level, badgeText, minIdx, maxIdx, steps, emojiPool }) {
-        const possibleStarts = [];
-        for (let i = minIdx; i <= maxIdx - steps; i++) {
-          possibleStarts.push(i);
-        }
-        const lowIdx = this.pick(possibleStarts);
-        const highIdx = lowIdx + steps;
-        const isGoingDown = Math.random() < 0.52;
-
-        const fromIdx = isGoingDown ? lowIdx : highIdx;
-        const toIdx = isGoingDown ? highIdx : lowIdx;
-        const fromU = LENGTH_UNITS[fromIdx].id;
-        const toU = LENGTH_UNITS[toIdx].id;
-
-        const baseNum = this.pick(BASE_NUMBERS_1_TO_10); // Strictly 1..10
+        const isDown = toIdx > fromIdx;
+        const steps = Math.abs(toIdx - fromIdx);
         const factor = Math.pow(10, steps);
+        const baseDigit = this.randInt(1, 10); // Angka pokok selalu 1 - 10!
 
-        const promptVal = isGoingDown ? baseNum : baseNum * factor;
-        const ans = isGoingDown ? baseNum * factor : baseNum;
+        const fromUnit = LENGTH_UNITS[fromIdx];
+        const toUnit = LENGTH_UNITS[toIdx];
 
-        const directionWord = isGoingDown ? 'turun' : 'naik';
-        const opSign = isGoingDown ? '×' : '÷';
+        let startVal, correctAnswer, explanation, tipText;
+
+        if (isDown) {
+          startVal = baseDigit;
+          correctAnswer = baseDigit * factor;
+          explanation = `Dari ${fromUnit.id} ke ${toUnit.id} turun ${steps} tangga, jadi dikali ${formatIndoNumber(factor)}: ${formatIndoNumber(startVal)} × ${formatIndoNumber(factor)} = ${formatIndoNumber(correctAnswer)} ${toUnit.id}.`;
+          tipText = `Dari ${fromUnit.id} ke ${toUnit.id} turun ${steps} tangga (× ${formatIndoNumber(factor)}).`;
+        } else {
+          startVal = baseDigit * factor;
+          correctAnswer = baseDigit;
+          explanation = `Dari ${fromUnit.id} ke ${toUnit.id} naik ${steps} tangga, jadi dibagi ${formatIndoNumber(factor)}: ${formatIndoNumber(startVal)} ÷ ${formatIndoNumber(factor)} = ${formatIndoNumber(correctAnswer)} ${toUnit.id}.`;
+          tipText = `Dari ${fromUnit.id} ke ${toUnit.id} naik ${steps} tangga (÷ ${formatIndoNumber(factor)}).`;
+        }
 
         return {
-          signature: `L${level}-${promptVal}-${fromU}-${toU}`,
-          badge: badgeText,
-          emoji: this.pick(emojiPool),
-          prompt: `${formatIndoNumber(promptVal)} ${fromU} = ... ${toU}`,
+          category: isDown ? `⬇️ Turun ${steps} Tangga` : `⬆️ Naik ${steps} Tangga`,
           subPrompt: '',
-          targetUnit: toU,
-          correctAnswer: ans,
-          options: this.generateDistractors(ans),
+          prompt: `${formatIndoNumber(startVal)} ${fromUnit.id} = ... ${toUnit.id}`,
+          targetUnit: toUnit.id,
+          correctAnswer,
+          choices: this.buildDistractors(correctAnswer),
+          explanation,
           staircaseHint: {
             fromIdx,
             toIdx,
-            tipText: `Dari ${fromU} ke ${toU} ${directionWord} ${steps} tangga (${opSign} ${formatIndoNumber(factor)}).`
-          },
-          explanation: `Dari ${fromU} ke ${toU} ${directionWord} ${steps} tangga, sehingga ${isGoingDown ? 'dikali' : 'dibagi'} ${formatIndoNumber(factor)}. Jadi ${formatIndoNumber(promptVal)} ${opSign} ${formatIndoNumber(factor)} = ${formatIndoNumber(ans)} ${toU}.`
+            tipText
+          }
         };
-      },
+      }
 
-      // LEVEL 1 — Pemula (2 Tangga: m, dm, cm | Lompatan 1-2 tangga | Angka dasar 1-10)
-      generateLevel1() {
-        const steps = this.pick([1, 2, 2]);
-        return this.buildConversionQuestion({
-          level: 1,
-          badgeText: '🌱 Level 1 • 2 Tangga (m – cm)',
-          minIdx: 3, // m
-          maxIdx: 5, // cm
-          steps,
-          emojiPool: ['📏', '🐰', '🌱', '📐']
-        });
-      },
+      /**
+       * Buat soal cerita atau penjumlahan/pengurangan ramah anak SD (Level 4)
+       */
+      static createStoryOrOpQuestion() {
+        const isStory = Math.random() < 0.55;
 
-      // LEVEL 2 — Penjelajah (4 Tangga, +2 Tangga: dam, m, dm, cm, mm | Prioritas 3-4 tangga, variasi 2-4 tangga)
-      generateLevel2() {
-        const steps = this.pick([3, 4, 3, 4, 2, 1]);
-        return this.buildConversionQuestion({
-          level: 2,
-          badgeText: '🧭 Level 2 • 4 Tangga (dam – mm)',
-          minIdx: 2, // dam
-          maxIdx: 6, // mm
-          steps,
-          emojiPool: ['🧭', '🎈', '🪜', '⚡']
-        });
-      },
-
-      // LEVEL 3 — Petualang (6 Tangga Penuh, +2 Tangga: km s.d. mm | Prioritas 5-6 tangga, variasi 3-6 tangga)
-      generateLevel3() {
-        const steps = this.pick([5, 6, 5, 6, 4, 3, 2, 1]);
-        return this.buildConversionQuestion({
-          level: 3,
-          badgeText: '🚀 Level 3 • 6 Tangga Penuh (km – mm)',
-          minIdx: 0, // km
-          maxIdx: 6, // mm
-          steps,
-          emojiPool: ['🚀', '🛤️', '🐇', '🌟']
-        });
-      },
-
-      // LEVEL 4 — Juara Tangga & Cerita (6 Tangga Penuh + Operasi Beda Satuan + Soal Cerita SD, angka dasar 1-10)
-      generateLevel4(qIndex) {
-        const subType = qIndex % 3;
-
-        // 1. Konversi 1-6 Tangga Penuh (angka dasar 1-10)
-        if (subType === 0) {
-          const steps = this.pick([1, 2, 3, 4, 5, 6]);
-          return this.buildConversionQuestion({
-            level: 4,
-            badgeText: '🏆 Level 4 • Konversi 6 Tangga',
-            minIdx: 0,
-            maxIdx: 6,
-            steps,
-            emojiPool: ['🏆', '🎯', '✨', '🚀']
-          });
+        if (isStory) {
+          const stories = [
+            () => {
+              const n = this.randInt(2, 9);
+              return {
+                category: '📖 Soal Cerita SD',
+                subPrompt: 'Cerita Panjang Pita',
+                prompt: `Rani membeli pita sepanjang ${n} m. Berapa cm panjang pita Rani?`,
+                targetUnit: 'cm',
+                correctAnswer: n * 100,
+                choices: this.buildDistractors(n * 100),
+                explanation: `Dari m ke cm turun 2 tangga (× 100), jadi ${n} × 100 = ${formatIndoNumber(n * 100)} cm.`,
+                staircaseHint: { fromIdx: 3, toIdx: 5, tipText: 'Dari m ke cm turun 2 tangga (dikali 100).' }
+              };
+            },
+            () => {
+              const n = this.randInt(2, 8);
+              return {
+                category: '📖 Soal Cerita SD',
+                subPrompt: 'Cerita Jarak Sekolah',
+                prompt: `Jarak rumah Budi ke sekolah adalah ${n} km. Berapa m jarak rumah Budi?`,
+                targetUnit: 'm',
+                correctAnswer: n * 1000,
+                choices: this.buildDistractors(n * 1000),
+                explanation: `Dari km ke m turun 3 tangga (× 1.000), jadi ${n} × 1.000 = ${formatIndoNumber(n * 1000)} m.`,
+                staircaseHint: { fromIdx: 0, toIdx: 3, tipText: 'Dari km ke m turun 3 tangga (dikali 1.000).' }
+              };
+            },
+            () => {
+              const n = this.randInt(2, 9);
+              const startCm = n * 100;
+              return {
+                category: '📖 Soal Cerita SD',
+                subPrompt: 'Cerita Tali Pramuka',
+                prompt: `Panjang tali pramuka Dito ${formatIndoNumber(startCm)} cm. Berapa m panjang tali Dito?`,
+                targetUnit: 'm',
+                correctAnswer: n,
+                choices: this.buildDistractors(n),
+                explanation: `Dari cm ke m naik 2 tangga (÷ 100), jadi ${formatIndoNumber(startCm)} ÷ 100 = ${n} m.`,
+                staircaseHint: { fromIdx: 5, toIdx: 3, tipText: 'Dari cm ke m naik 2 tangga (dibagi 100).' }
+              };
+            },
+            () => {
+              const n = this.randInt(3, 10);
+              return {
+                category: '📖 Soal Cerita SD',
+                subPrompt: 'Cerita Panjang Pensil',
+                prompt: `Panjang pensil Sinta ${n} cm. Berapa mm panjang pensil Sinta?`,
+                targetUnit: 'mm',
+                correctAnswer: n * 10,
+                choices: this.buildDistractors(n * 10),
+                explanation: `Dari cm ke mm turun 1 tangga (× 10), jadi ${n} × 10 = ${formatIndoNumber(n * 10)} mm.`,
+                staircaseHint: { fromIdx: 5, toIdx: 6, tipText: 'Dari cm ke mm turun 1 tangga (dikali 10).' }
+              };
+            }
+          ];
+          return this.pickRandom(stories)();
         }
 
-        // 2. Penjumlahan / Pengurangan Beda Satuan (lompatan 1-2 tangga, angka dasar 1-10)
-        if (subType === 1) {
-          const steps = this.pick([1, 2]);
-          const targetIdx = this.randInt(steps, 6);
-          const higherIdx = targetIdx - steps;
-          const factor = Math.pow(10, steps);
-
-          const baseHigh = this.pick(BASE_NUMBERS_1_TO_10);
-          const baseLow = this.pick(BASE_NUMBERS_1_TO_10);
-          const lowUnitSteps = steps === 2 ? this.pick([0, 1]) : 0;
-          const lowIdx = targetIdx - lowUnitSteps;
-          const valLowDisplay = baseLow * Math.pow(10, lowUnitSteps);
-
-          const isPlus = Math.random() < 0.6;
-          const highInTarget = baseHigh * factor;
-          const lowInTarget = baseLow * Math.pow(10, lowUnitSteps);
-
-          const highU = LENGTH_UNITS[higherIdx].id;
-          const lowU = LENGTH_UNITS[lowIdx].id;
-          const targetU = LENGTH_UNITS[targetIdx].id;
-
-          if (isPlus) {
-            const ans = highInTarget + lowInTarget;
-            return {
-              signature: `L4OP+${baseHigh}${highU}+${valLowDisplay}${lowU}->${targetU}`,
-              badge: '🏆 Level 4 • Operasi Hitung',
-              emoji: '🧮',
-              prompt: `${formatIndoNumber(baseHigh)} ${highU} + ${formatIndoNumber(valLowDisplay)} ${lowU} = ... ${targetU}`,
-              subPrompt: `Ubah semua satuan menjadi ${targetU} terlebih dahulu!`,
-              targetUnit: targetU,
-              correctAnswer: ans,
-              options: this.generateDistractors(ans),
-              staircaseHint: {
-                fromIdx: higherIdx,
-                toIdx: targetIdx,
-                tipText: `Dari ${highU} ke ${targetU} turun ${steps} tangga (× ${formatIndoNumber(factor)}).`
-              },
-              explanation: `Ubah ke ${targetU}: ${formatIndoNumber(baseHigh)} ${highU} = ${formatIndoNumber(highInTarget)} ${targetU}${lowIdx !== targetIdx ? `, dan ${formatIndoNumber(valLowDisplay)} ${lowU} = ${formatIndoNumber(lowInTarget)} ${targetU}` : ''}. Lalu ${formatIndoNumber(highInTarget)} + ${formatIndoNumber(lowInTarget)} = ${formatIndoNumber(ans)} ${targetU}.`
-            };
-          } else {
-            const safeBaseHigh = Math.max(baseHigh, 2);
-            const safeHighInTarget = safeBaseHigh * factor;
-            const safeBaseLow = this.randInt(1, Math.min(9, safeBaseHigh * (factor / Math.pow(10, lowUnitSteps)) - 1));
-            const safeValLowDisplay = safeBaseLow * Math.pow(10, lowUnitSteps);
-            const safeLowInTarget = safeBaseLow * Math.pow(10, lowUnitSteps);
-            const ans = safeHighInTarget - safeLowInTarget;
-
-            return {
-              signature: `L4OP-${safeBaseHigh}${highU}-${safeValLowDisplay}${lowU}->${targetU}`,
-              badge: '🏆 Level 4 • Operasi Hitung',
-              emoji: '🧮',
-              prompt: `${formatIndoNumber(safeBaseHigh)} ${highU} − ${formatIndoNumber(safeValLowDisplay)} ${lowU} = ... ${targetU}`,
-              subPrompt: `Ubah semua satuan menjadi ${targetU} terlebih dahulu!`,
-              targetUnit: targetU,
-              correctAnswer: ans,
-              options: this.generateDistractors(ans),
-              staircaseHint: {
-                fromIdx: higherIdx,
-                toIdx: targetIdx,
-                tipText: `Dari ${highU} ke ${targetU} turun ${steps} tangga (× ${formatIndoNumber(factor)}).`
-              },
-              explanation: `Ubah ke ${targetU}: ${formatIndoNumber(safeBaseHigh)} ${highU} = ${formatIndoNumber(safeHighInTarget)} ${targetU}${lowIdx !== targetIdx ? `, dan ${formatIndoNumber(safeValLowDisplay)} ${lowU} = ${formatIndoNumber(safeLowInTarget)} ${targetU}` : ''}. Lalu ${formatIndoNumber(safeHighInTarget)} − ${formatIndoNumber(safeLowInTarget)} = ${formatIndoNumber(ans)} ${targetU}.`
-            };
-          }
-        }
-
-        // 3. Soal Cerita Kontekstual Anak SD (angka dasar 1-10)
-        const n = this.pick(BASE_NUMBERS_1_TO_10);
-        const m = this.randInt(1, 9);
-        const storyTemplates = [
-          {
-            emoji: '🏫',
-            prompt: `Jarak rumah Budi ke sekolah adalah ${n} km. Berapa m jarak yang ditempuh Budi ke sekolah?`,
-            sub: `${n} km = ... m`,
-            fromIdx: 0, toIdx: 3, ans: n * 1000,
-            exp: `Dari km ke m turun 3 tangga (× 1.000). Jadi ${n} × 1.000 = ${formatIndoNumber(n * 1000)} m.`
-          },
-          {
-            emoji: '🦒',
-            prompt: `Tinggi pagar taman bermain adalah ${n} m. Berapa cm tinggi pagar taman tersebut?`,
-            sub: `${n} m = ... cm`,
-            fromIdx: 3, toIdx: 5, ans: n * 100,
-            exp: `Dari m ke cm turun 2 tangga (× 100). Jadi ${n} × 100 = ${formatIndoNumber(n * 100)} cm.`
-          },
-          {
-            emoji: '✏️',
-            prompt: `Panjang penggaris kayu milik Rina adalah ${n * 10} cm. Berapa mm panjang penggaris Rina?`,
-            sub: `${n * 10} cm = ... mm`,
-            fromIdx: 5, toIdx: 6, ans: n * 100,
-            exp: `Dari cm ke mm turun 1 tangga (× 10). Jadi ${n * 10} × 10 = ${formatIndoNumber(n * 100)} mm.`
-          },
-          {
-            emoji: '🌳',
-            prompt: `Tinggi pohon mangga di halaman sekolah adalah ${formatIndoNumber(n * 100)} cm. Berapa m tinggi pohon mangga tersebut?`,
-            sub: `${formatIndoNumber(n * 100)} cm = ... m`,
-            fromIdx: 5, toIdx: 3, ans: n,
-            exp: `Dari cm ke m naik 2 tangga (÷ 100). Jadi ${formatIndoNumber(n * 100)} ÷ 100 = ${n} m.`
-          },
-          {
-            emoji: '🚴',
-            prompt: `Siti bersepeda mengelilingi kota sejauh ${formatIndoNumber(n * 1000)} m. Berapa km jarak yang ditempuh Siti?`,
-            sub: `${formatIndoNumber(n * 1000)} m = ... km`,
-            fromIdx: 3, toIdx: 0, ans: n,
-            exp: `Dari m ke km naik 3 tangga (÷ 1.000). Jadi ${formatIndoNumber(n * 1000)} ÷ 1.000 = ${n} km.`
-          },
-          {
-            emoji: '🎀',
-            prompt: `Ibu membeli pita sepanjang ${Math.max(n, 2)} m, lalu dipotong ${m}0 cm untuk menghias kado. Berapa cm sisa pita Ibu?`,
-            sub: `${Math.max(n, 2)} m − ${m}0 cm = ... cm`,
-            fromIdx: 3, toIdx: 5, ans: Math.max(n, 2) * 100 - m * 10,
-            exp: `${Math.max(n, 2)} m = ${Math.max(n, 2) * 100} cm. Sisa pita = ${Math.max(n, 2) * 100} cm − ${m * 10} cm = ${Math.max(n, 2) * 100 - m * 10} cm.`
-          },
-          {
-            emoji: '🐜',
-            prompt: `Seekor semut berjalan sejauh ${n} dam. Berapa cm jarak yang ditempuh semut itu?`,
-            sub: `${n} dam = ... cm`,
-            fromIdx: 2, toIdx: 5, ans: n * 1000,
-            exp: `Dari dam ke cm turun 3 tangga (× 1.000). Jadi ${n} × 1.000 = ${formatIndoNumber(n * 1000)} cm.`
-          },
-          {
-            emoji: '🚂',
-            prompt: `Panjang lintasan kereta mainan adik adalah ${formatIndoNumber(n * 1000)} mm. Berapa m panjang lintasan tersebut?`,
-            sub: `${formatIndoNumber(n * 1000)} mm = ... m`,
-            fromIdx: 6, toIdx: 3, ans: n,
-            exp: `Dari mm ke m naik 3 tangga (÷ 1.000). Jadi ${formatIndoNumber(n * 1000)} ÷ 1.000 = ${n} m.`
-          }
-        ];
-
-        const s = this.pick(storyTemplates);
-        const toU = LENGTH_UNITS[s.toIdx].id;
+        // Penjumlahan beda satuan (1 tangga, angka dasar 1-9)
+        const a = this.randInt(1, 8);
+        const b = this.randInt(1, 9);
+        const totalCm = a * 10 + b;
         return {
-          signature: `L4ST-${s.sub}`,
-          badge: '🏆 Level 4 • Soal Cerita SD',
-          emoji: s.emoji,
-          prompt: s.prompt,
-          subPrompt: s.sub,
-          targetUnit: toU,
-          correctAnswer: s.ans,
-          options: this.generateDistractors(s.ans),
-          staircaseHint: {
-            fromIdx: s.fromIdx,
-            toIdx: s.toIdx,
-            tipText: `Perhatikan perubahan satuan dari ${LENGTH_UNITS[s.fromIdx].id} ke ${toU} pada tangga!`
-          },
-          explanation: s.exp
+          category: '➕ Penjumlahan Satuan',
+          subPrompt: 'Samakan Satuannya Dulu',
+          prompt: `${a} dm + ${b} cm = ... cm`,
+          targetUnit: 'cm',
+          correctAnswer: totalCm,
+          choices: this.buildDistractors(totalCm),
+          explanation: `Ubah ${a} dm menjadi ${a * 10} cm (turun 1 tangga), lalu jumlahkan: ${a * 10} cm + ${b} cm = ${totalCm} cm.`,
+          staircaseHint: { fromIdx: 4, toIdx: 5, tipText: 'Ubah dm ke cm dulu: turun 1 tangga (× 10).' }
         };
-      },
+      }
 
-      generateSession(level, count = 10) {
+      static generateQuizSet(level, count = 10) {
         const list = [];
-        const usedSignatures = new Set();
-        let attempts = 0;
-
-        while (list.length < count && attempts < 150) {
-          attempts++;
-          let q;
-          if (level === 1) q = this.generateLevel1();
-          else if (level === 2) q = this.generateLevel2();
-          else if (level === 3) q = this.generateLevel3();
-          else q = this.generateLevel4(list.length);
-
-          if (!usedSignatures.has(q.signature)) {
-            usedSignatures.add(q.signature);
-            list.push(q);
+        for (let i = 0; i < count; i++) {
+          if (level === 1) {
+            // Level 1: 2 Tangga (m [3] - dm [4] - cm [5])
+            list.push(this.createConversionQuestion(3, 5, 1, 2));
+          } else if (level === 2) {
+            // Level 2: 4 Tangga (+2) (dam [2] - m [3] - dm [4] - cm [5] - mm [6])
+            list.push(this.createConversionQuestion(2, 6, 3, 4));
+          } else if (level === 3) {
+            // Level 3: 6 Tangga (+2) (km [0] - mm [6])
+            list.push(this.createConversionQuestion(0, 6, 5, 6));
+          } else {
+            // Level 4: Juara SD (6 Tangga penuh + Soal Cerita / Penjumlahan)
+            if (i % 2 === 0) {
+              list.push(this.createConversionQuestion(0, 6, 3, 6));
+            } else {
+              list.push(this.createStoryOrOpQuestion());
+            }
           }
         }
         return list;
       }
-    };
+    }
 
     /**
-     * 6. PENGENDALI SESI KUIS (QUIZ CONTROLLER)
+     * 6. PENGENDALI UTAMA KUIS LATIHAN
      */
     class QuizController {
       constructor() {
         this.level = 1;
-        this.mode = 'choice';
+        this.mode = 'mc'; // 'mc' atau 'input'
         this.questions = [];
         this.currentIndex = 0;
         this.score = 0;
+        this.correctCount = 0;
         this.streak = 0;
         this.bestStreak = 0;
-        this.correctCount = 0;
         this.answered = false;
+        this.typedValue = '';
         this.helperOpen = false;
         this.helperWidget = null;
       }
@@ -1509,20 +1294,30 @@
       start(level, mode) {
         this.level = level;
         this.mode = mode;
-        this.questions = QuestionGenerator.generateSession(level, 10);
+        this.questions = QuestionGenerator.generateQuizSet(level, 10);
         this.currentIndex = 0;
         this.score = 0;
+        this.correctCount = 0;
         this.streak = 0;
         this.bestStreak = 0;
-        this.correctCount = 0;
         this.answered = false;
+        this.typedValue = '';
+        this.helperOpen = false;
 
         if (!this.helperWidget) {
-          this.helperWidget = new StaircaseWidget('quiz-staircase-mount', {
-            interactive: false
-          });
-          staircaseRegistry['quiz-staircase-mount'] = this.helperWidget;
+          this.helperWidget = new StaircaseWidget('quiz-helper-staircase', { interactive: false });
         }
+
+        const levelBadges = {
+          1: '🌱 Level 1 (2 Tangga)',
+          2: '🚀 Level 2 (4 Tangga)',
+          3: '🌟 Level 3 (6 Tangga)',
+          4: '🏆 Level 4 (Juara SD)'
+        };
+        document.getElementById('quiz-level-badge').textContent = levelBadges[level] || '🌱 Level 1';
+        document.getElementById('quiz-score').textContent = '0';
+        document.getElementById('quiz-streak').textContent = '0';
+        document.getElementById('streak-icon').classList.remove('flame-active');
 
         this.renderQuestion();
       }
@@ -1540,6 +1335,7 @@
           const q = this.questions[this.currentIndex];
           if (q && this.helperWidget) {
             this.helperWidget.animateJourney(q.staircaseHint.fromIdx, q.staircaseHint.toIdx, true);
+            soundFX.speak(q.staircaseHint.tipText, 350);
           }
         } else {
           panel.classList.add('hidden');
@@ -1547,200 +1343,190 @@
         }
       }
 
+      readCurrentQuestion() {
+        const q = this.questions[this.currentIndex];
+        if (!q) return;
+        soundFX.playClick();
+        const fullPrompt = q.subPrompt ? `${q.prompt}. ${q.subPrompt}` : q.prompt;
+        soundFX.speak(fullPrompt);
+      }
+
+      replayFeedbackVoice() {
+        const q = this.questions[this.currentIndex];
+        if (!q) return;
+        soundFX.playClick();
+        soundFX.speak(q.explanation);
+      }
+
       renderQuestion() {
         const q = this.questions[this.currentIndex];
-        const lvlCfg = LEVEL_CONFIGS[this.level] || LEVEL_CONFIGS[1];
+        if (!q) return;
+
         this.answered = false;
+        this.typedValue = '';
 
-        // Update Top HUD
-        document.getElementById('quiz-progress-text').textContent = this.currentIndex + 1;
-        document.getElementById('quiz-progress-bar').style.width = `${((this.currentIndex + 1) / 10) * 100}%`;
-        document.getElementById('quiz-score').textContent = this.score;
-        document.getElementById('quiz-streak').textContent = this.streak;
+        // Progress Bar & Nomor Soal
+        const num = this.currentIndex + 1;
+        document.getElementById('quiz-progress-text').textContent = `${num}/10`;
+        document.getElementById('quiz-progress-bar').style.width = `${num * 10}%`;
 
-        const streakIcon = document.getElementById('streak-icon');
-        if (this.streak >= 2) {
-          streakIcon.classList.add('flame-active');
-        } else {
-          streakIcon.classList.remove('flame-active');
-        }
-
-        // Update Question Card
-        document.getElementById('quiz-category-badge').textContent = q.badge;
-        document.getElementById('quiz-emoji').textContent = q.emoji;
-        document.getElementById('quiz-question-text').textContent = q.prompt;
-
-        const subEl = document.getElementById('quiz-sub-prompt');
+        // Kategori & Pertanyaan
+        document.getElementById('quiz-category-badge').textContent = q.category;
+        const subEl = document.getElementById('quiz-subprompt');
         if (q.subPrompt) {
           subEl.textContent = q.subPrompt;
           subEl.classList.remove('hidden');
         } else {
           subEl.classList.add('hidden');
         }
+        document.getElementById('quiz-prompt').textContent = q.prompt;
 
-        // Reset Helper Panel & sorot tangga aktif sesuai level
-        this.helperOpen = false;
-        document.getElementById('quiz-helper-panel').classList.add('hidden');
-        document.getElementById('helper-btn-label').textContent = 'Lihat Tangga Bantuan';
-        document.getElementById('quiz-active-stairs-label').textContent = `Tangga Aktif Level ${this.level}: ${lvlCfg.rangeLabel}`;
-        document.getElementById('quiz-helper-tip').textContent = q.staircaseHint.tipText;
-        this.helperWidget.setActiveRange(lvlCfg.minIdx, lvlCfg.maxIdx);
-        this.helperWidget.updateHighlights(q.staircaseHint.fromIdx, q.staircaseHint.toIdx);
-        this.helperWidget.placeBunnyAt(q.staircaseHint.fromIdx, false);
+        // Perbarui Tangga Bantuan jika sedang terbuka
+        if (this.helperWidget) {
+          document.getElementById('quiz-helper-tip').textContent = `💡 ${q.staircaseHint.tipText}`;
+          if (this.helperOpen) {
+            this.helperWidget.animateJourney(q.staircaseHint.fromIdx, q.staircaseHint.toIdx, false);
+          }
+        }
 
         // Sembunyikan Kartu Umpan Balik
         document.getElementById('quiz-feedback-card').classList.add('hidden');
 
+        // Bacakan soal dengan suara kata-kata ramah anak
+        const fullPrompt = q.subPrompt ? `${q.prompt}. ${q.subPrompt}` : q.prompt;
+        soundFX.speak(fullPrompt, 220);
+
         // Render Mode Jawaban
-        const choiceZone = document.getElementById('answer-zone-choice');
-        const inputZone = document.getElementById('answer-zone-input');
+        const mcBox = document.getElementById('quiz-mc-container');
+        const inputBox = document.getElementById('quiz-input-container');
 
-        if (this.mode === 'choice') {
-          choiceZone.classList.remove('hidden');
-          inputZone.classList.add('hidden');
+        if (this.mode === 'mc') {
+          mcBox.classList.remove('hidden');
+          inputBox.classList.add('hidden');
 
-          const btnColors = [
-            'bg-sky-400 hover:bg-sky-500 border-sky-600 text-white',
-            'bg-amber-400 hover:bg-amber-500 border-amber-600 text-amber-950',
-            'bg-purple-400 hover:bg-purple-500 border-purple-600 text-white',
-            'bg-rose-400 hover:bg-rose-500 border-rose-600 text-white'
-          ];
           const letters = ['A', 'B', 'C', 'D'];
+          mcBox.innerHTML = q.choices
+            .map(
+              (choiceVal, idx) => `
+              <button
+                type="button"
+                data-choice-val="${choiceVal}"
+                class="mc-option-btn btn-tactile p-4 rounded-2xl bg-white hover:bg-sky-50 border-4 border-slate-200 hover:border-sky-400 text-left flex items-center gap-3 shadow-xs"
+              >
+                <span class="w-9 h-9 rounded-xl bg-sky-100 text-sky-800 font-display font-bold text-lg flex items-center justify-center shrink-0">
+                  ${letters[idx]}
+                </span>
+                <span class="font-display font-bold text-xl sm:text-2xl text-slate-800">
+                  ${formatIndoNumber(choiceVal)} ${q.targetUnit}
+                </span>
+              </button>
+            `
+            )
+            .join('');
 
-          choiceZone.innerHTML = q.options.map((optVal, idx) => `
-            <button type="button"
-                    onclick="quiz.submitChoiceAnswer(${optVal}, this)"
-                    data-opt-val="${optVal}"
-                    class="choice-opt-btn btn-tactile p-4 sm:p-5 rounded-2xl ${btnColors[idx]} border-b-8 font-display font-bold text-xl sm:text-2xl shadow-md flex items-center justify-between gap-3">
-              <span class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-white/30 flex items-center justify-center text-base sm:text-lg font-extrabold shrink-0">
-                ${letters[idx]}
-              </span>
-              <span class="flex-1 text-center">${formatIndoNumber(optVal)} ${q.targetUnit}</span>
-              <span class="w-6 text-right status-mark"></span>
-            </button>
-          `).join('');
+          mcBox.querySelectorAll('.mc-option-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+              if (this.answered) return;
+              const picked = parseInt(btn.getAttribute('data-choice-val'), 10);
+              this.evaluateAnswer(picked);
+            });
+          });
         } else {
-          choiceZone.classList.add('hidden');
-          inputZone.classList.remove('hidden');
-
-          const textInput = document.getElementById('quiz-text-input');
-          textInput.value = '';
-          textInput.disabled = false;
-          document.getElementById('quiz-input-unit').textContent = q.targetUnit;
-          document.getElementById('btn-submit-input').disabled = false;
-          this.updateZeroHelper();
-
-          if (window.innerWidth >= 768) {
-            setTimeout(() => textInput.focus(), 100);
-          }
+          mcBox.classList.add('hidden');
+          inputBox.classList.remove('hidden');
+          document.getElementById('quiz-typed-unit').textContent = q.targetUnit;
+          this.updateTypedDisplay();
         }
       }
 
-      submitChoiceAnswer(chosenVal, btnEl) {
+      pressKeypad(digit) {
         if (this.answered) return;
-        const q = this.questions[this.currentIndex];
-        const isCorrect = Math.abs(chosenVal - q.correctAnswer) < 0.0001;
-
-        document.querySelectorAll('.choice-opt-btn').forEach(btn => {
-          btn.disabled = true;
-          const val = parseFloat(btn.getAttribute('data-opt-val'));
-          const mark = btn.querySelector('.status-mark');
-
-          if (Math.abs(val - q.correctAnswer) < 0.0001) {
-            btn.className = 'choice-opt-btn btn-tactile p-4 sm:p-5 rounded-2xl bg-emerald-500 border-emerald-700 text-white border-b-8 font-display font-bold text-xl sm:text-2xl shadow-md flex items-center justify-between gap-3 ring-4 ring-emerald-300';
-            if (mark) mark.textContent = '✓';
-          } else if (btn === btnEl && !isCorrect) {
-            btn.className = 'choice-opt-btn btn-tactile p-4 sm:p-5 rounded-2xl bg-rose-500 border-rose-700 text-white border-b-8 font-display font-bold text-xl sm:text-2xl shadow-md flex items-center justify-between gap-3 opacity-90';
-            if (mark) mark.textContent = '✗';
-          } else {
-            btn.classList.add('opacity-55');
-          }
-        });
-
-        this.finalizeAnswer(isCorrect);
+        if (this.typedValue.length >= 9) return;
+        if (this.typedValue === '0' && digit === '0') return;
+        soundFX.playClick();
+        if (this.typedValue === '0') {
+          this.typedValue = digit;
+        } else {
+          this.typedValue += digit;
+        }
+        this.updateTypedDisplay();
       }
 
-      keypadPress(char) {
+      backspaceInput() {
         if (this.answered) return;
         soundFX.playClick();
-        const input = document.getElementById('quiz-text-input');
-        if (input.value.length >= 12) return;
-        input.value += char;
-        this.updateZeroHelper();
+        this.typedValue = this.typedValue.slice(0, -1);
+        this.updateTypedDisplay();
       }
 
-      keypadBackspace() {
+      clearInput() {
         if (this.answered) return;
         soundFX.playClick();
-        const input = document.getElementById('quiz-text-input');
-        input.value = input.value.slice(0, -1);
-        this.updateZeroHelper();
+        this.typedValue = '';
+        this.updateTypedDisplay();
       }
 
-      keypadClear() {
-        if (this.answered) return;
-        soundFX.playClick();
-        document.getElementById('quiz-text-input').value = '';
-        this.updateZeroHelper();
-      }
+      updateTypedDisplay() {
+        const displayEl = document.getElementById('quiz-typed-display');
+        const zeroPill = document.getElementById('zero-helper-pill');
+        if (!displayEl || !zeroPill) return;
 
-      onInputChange() {
-        this.updateZeroHelper();
-      }
-
-      /**
-       * Fitur Bantu Hitung Nol: Memformat angka dengan titik ribuan otomatis
-       * dan menghitung jumlah nol di belakang angka agar anak tidak keliru mengetik
-       */
-      updateZeroHelper() {
-        const input = document.getElementById('quiz-text-input');
-        const formattedEl = document.getElementById('zero-helper-formatted');
-        const countEl = document.getElementById('zero-helper-count');
-        if (!input || !formattedEl || !countEl) return;
-
-        const digitsOnly = input.value.replace(/[^\d]/g, '');
-        if (!digitsOnly) {
-          formattedEl.textContent = '0';
-          countEl.textContent = '0 angka nol';
+        if (!this.typedValue) {
+          displayEl.value = '';
+          zeroPill.textContent = 'Ketik angka jawabanmu menggunakan tombol di bawah 👇';
+          zeroPill.className = 'px-3.5 py-1 rounded-full bg-amber-100 text-amber-900 text-xs sm:text-sm font-extrabold';
           return;
         }
 
-        const numericVal = parseInt(digitsOnly, 10);
-        formattedEl.textContent = formatIndoNumber(numericVal);
+        const numVal = parseInt(this.typedValue, 10);
+        const formatted = formatIndoNumber(numVal);
+        displayEl.value = formatted;
 
-        const trailingZerosMatch = digitsOnly.match(/0+$/);
-        const zeroCount = trailingZerosMatch ? trailingZerosMatch[0].length : 0;
-        countEl.textContent = `${zeroCount} angka nol`;
+        const zeroCount = (this.typedValue.match(/0/g) || []).length;
+        zeroPill.textContent = `Terbaca: ${formatted} • Jumlah angka nol: ${zeroCount}`;
+        zeroPill.className = 'px-3.5 py-1 rounded-full bg-sky-100 text-sky-900 text-xs sm:text-sm font-extrabold';
       }
 
-      submitInputAnswer() {
+      submitTypedAnswer() {
         if (this.answered) return;
-        const inputEl = document.getElementById('quiz-text-input');
-        const displayBox = document.getElementById('input-display-box');
-        const digitsOnly = inputEl.value.replace(/\./g, '').trim();
-        const userNum = parseIndoInput(digitsOnly);
-
-        if (digitsOnly === '' || isNaN(userNum)) {
-          soundFX.playWrong();
-          displayBox.classList.remove('animate-shake');
-          void displayBox.offsetWidth;
-          displayBox.classList.add('animate-shake');
-          inputEl.focus();
+        const val = parseIndoInput(this.typedValue);
+        if (isNaN(val)) {
+          const card = document.getElementById('quiz-question-card');
+          card.classList.remove('animate-shake');
+          void card.offsetWidth;
+          card.classList.add('animate-shake');
+          soundFX.playWrong('');
           return;
         }
-
-        const q = this.questions[this.currentIndex];
-        const isCorrect = Math.abs(userNum - q.correctAnswer) < 0.0001;
-
-        inputEl.disabled = true;
-        document.getElementById('btn-submit-input').disabled = true;
-
-        this.finalizeAnswer(isCorrect);
+        this.evaluateAnswer(val);
       }
 
-      finalizeAnswer(isCorrect) {
+      evaluateAnswer(userValue) {
+        if (this.answered) return;
         this.answered = true;
+
         const q = this.questions[this.currentIndex];
+        const isCorrect = userValue === q.correctAnswer;
+
+        // Tandai tombol Pilihan Ganda jika mode MC
+        if (this.mode === 'mc') {
+          document.querySelectorAll('.mc-option-btn').forEach((btn) => {
+            const val = parseInt(btn.getAttribute('data-choice-val'), 10);
+            btn.disabled = true;
+            if (val === q.correctAnswer) {
+              btn.classList.remove('border-slate-200', 'bg-white');
+              btn.classList.add('border-emerald-500', 'bg-emerald-100', 'ring-4', 'ring-emerald-300');
+            } else if (val === userValue && !isCorrect) {
+              btn.classList.remove('border-slate-200', 'bg-white');
+              btn.classList.add('border-rose-500', 'bg-rose-100');
+            } else {
+              btn.classList.add('opacity-55');
+            }
+          });
+        }
+
+        const cheers = ['Hebat Sekali!', 'Pintar Banget!', 'Luar Biasa!', 'Keren, Tepat!'];
+        const cheerWord = 'Masya Allah!';
 
         if (isCorrect) {
           this.score += 10;
@@ -1749,18 +1535,18 @@
           if (this.streak > this.bestStreak) {
             this.bestStreak = this.streak;
           }
-          soundFX.playCorrect();
+          soundFX.playCorrect(cheerWord, this.streak);
 
           if (typeof confetti === 'function' && (this.streak >= 3 || this.currentIndex === 9)) {
             confetti({
-              particleCount: 45,
-              spread: 60,
+              particleCount: 48,
+              spread: 65,
               origin: { y: 0.7 }
             });
           }
         } else {
           this.streak = 0;
-          soundFX.playWrong();
+          soundFX.playWrong(`${formatIndoNumber(q.correctAnswer)} ${q.targetUnit}`);
         }
 
         // Perbarui HUD Skor & Streak
@@ -1781,37 +1567,33 @@
         const nextBtn = document.getElementById('btn-next-question');
         const nextLabel = document.getElementById('next-btn-label');
 
-        const cheers = ['Hebat Sekali!', 'Pintar Banget!', 'Luar Biasa!', 'Keren, Tepat!'];
-        const cheerWord = cheers[Math.floor(Math.random() * cheers.length)];
-
         if (isCorrect) {
-          card.className = 'rounded-3xl p-5 sm:p-6 border-b-8 shadow-xl space-y-4 animate-pop-in bg-emerald-50 border-emerald-300 text-emerald-950';
-          icon.className = 'w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-sm bg-emerald-500 text-white';
+          card.className = 'rounded-3xl p-5 sm:p-6 border-b-8 shadow-xl space-y-4 animate-pop-in bg-emerald-50 border-emerald-400 text-emerald-950';
+          icon.className = 'btn-tactile w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-sm cursor-pointer bg-emerald-500 text-white';
           icon.textContent = '🎉';
-          title.textContent = `${cheerWord} (+10 Poin)`;
-          exp.textContent = q.explanation;
-          nextBtn.className = 'btn-tactile w-full py-3.5 px-6 rounded-2xl bg-emerald-500 hover:bg-emerald-600 border-b-4 border-emerald-700 font-display font-bold text-lg sm:text-xl text-white shadow-md flex items-center justify-center gap-2';
+          title.textContent = `${cheerWord} Jawabanmu benar! (+10 Poin)`;
+          nextBtn.className = 'btn-tactile w-full py-3.5 px-6 rounded-2xl font-display font-bold text-lg sm:text-xl text-white shadow-md flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 border-b-4 border-emerald-800';
         } else {
-          card.className = 'rounded-3xl p-5 sm:p-6 border-b-8 shadow-xl space-y-4 animate-pop-in bg-amber-50 border-amber-300 text-amber-950';
-          icon.className = 'w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-sm bg-orange-400 text-white';
+          card.className = 'rounded-3xl p-5 sm:p-6 border-b-8 shadow-xl space-y-4 animate-pop-in bg-rose-50 border-rose-400 text-rose-950';
+          icon.className = 'btn-tactile w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-3xl shrink-0 shadow-sm cursor-pointer bg-rose-500 text-white';
           icon.textContent = '💡';
           title.textContent = `Hampir Tepat! Jawaban: ${formatIndoNumber(q.correctAnswer)} ${q.targetUnit}`;
-          exp.textContent = q.explanation;
-          nextBtn.className = 'btn-tactile w-full py-3.5 px-6 rounded-2xl bg-sky-500 hover:bg-sky-600 border-b-4 border-sky-700 font-display font-bold text-lg sm:text-xl text-white shadow-md flex items-center justify-center gap-2';
+          nextBtn.className = 'btn-tactile w-full py-3.5 px-6 rounded-2xl font-display font-bold text-lg sm:text-xl text-white shadow-md flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 border-b-4 border-sky-800';
         }
 
-        nextLabel.textContent = this.currentIndex < 9 ? 'Soal Berikutnya' : 'Lihat Rapor Akhir';
+        exp.textContent = q.explanation;
+        nextLabel.textContent = this.currentIndex === 9 ? 'Lihat Rapor Akhir' : 'Soal Berikutnya';
         card.classList.remove('hidden');
       }
 
       nextQuestion() {
+        soundFX.stopSpeech();
         soundFX.playClick();
-        if (this.currentIndex < 9) {
+        if (this.currentIndex < this.questions.length - 1) {
           this.currentIndex += 1;
           this.renderQuestion();
         } else {
           app.showResult({
-            level: this.level,
             score: this.score,
             correctCount: this.correctCount,
             bestStreak: this.bestStreak
@@ -1820,59 +1602,51 @@
       }
     }
 
+    /**
+     * 7. PENGENDALI NAVIGASI LAYAR & STATE GLOBAL
+     */
+    const soundFX = new SoundManager();
+    const explorer = new StaircaseExplorer();
     const quiz = new QuizController();
 
-    /**
-     * 7. PENGENDALI UTAMA APLIKASI (APP STATE & NAVIGATION)
-     */
     const app = {
       selectedLevel: 1,
-      selectedMode: 'choice',
+      selectedMode: 'mc',
       explorerInitialized: false,
 
-      init() {
-        this.selectLevel(1, false);
-        this.selectMode('choice', false);
-        this.bindKeyboardShortcuts();
-      },
-
-      toggleSound() {
-        soundFX.toggle();
-      },
-
-      setActiveTabUI(tabName) {
-        const explorerTab = document.getElementById('tab-btn-explorer');
-        const quizTab = document.getElementById('tab-btn-quiz');
-        if (!explorerTab || !quizTab) return;
-
-        if (tabName === 'explorer') {
-          explorerTab.className = 'btn-tactile px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-display font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all bg-purple-500 text-white shadow-sm';
-          quizTab.className = 'btn-tactile px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-display font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all text-slate-700 hover:text-sky-800';
-        } else {
-          quizTab.className = 'btn-tactile px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-display font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all bg-sky-500 text-white shadow-sm';
-          explorerTab.className = 'btn-tactile px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl font-display font-bold text-xs sm:text-sm flex items-center gap-1.5 transition-all text-slate-700 hover:text-purple-800';
-        }
-      },
-
       showScreen(screenId) {
-        ['screen-home', 'screen-explorer', 'screen-quiz', 'screen-result'].forEach(id => {
+        ['screen-home', 'screen-explorer', 'screen-quiz', 'screen-result'].forEach((id) => {
           const el = document.getElementById(id);
-          if (el) el.classList.add('hidden');
+          if (el) {
+            if (id === screenId) {
+              el.classList.remove('hidden');
+            } else {
+              el.classList.add('hidden');
+            }
+          }
         });
-        const target = document.getElementById(screenId);
-        if (target) {
-          target.classList.remove('hidden');
-          window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        const tabExp = document.getElementById('nav-tab-explorer');
+        const tabQuiz = document.getElementById('nav-tab-quiz');
+        if (tabExp && tabQuiz) {
+          if (screenId === 'screen-explorer') {
+            tabExp.className = 'btn-tactile px-3 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1.5 bg-amber-400 text-amber-950 shadow-xs';
+            tabQuiz.className = 'btn-tactile px-3 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1.5 text-slate-600 hover:bg-sky-50';
+          } else {
+            tabQuiz.className = 'btn-tactile px-3 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1.5 bg-sky-500 text-white shadow-xs';
+            tabExp.className = 'btn-tactile px-3 py-1.5 rounded-xl font-extrabold text-xs sm:text-sm flex items-center gap-1.5 text-slate-600 hover:bg-sky-50';
+          }
         }
-        this.setActiveTabUI(screenId === 'screen-explorer' ? 'explorer' : 'quiz');
       },
 
       goHome() {
+        soundFX.stopSpeech();
         soundFX.playClick();
         this.showScreen('screen-home');
       },
 
       openExplorer() {
+        soundFX.stopSpeech();
         soundFX.playClick();
         this.showScreen('screen-explorer');
         if (!this.explorerInitialized) {
@@ -1883,51 +1657,48 @@
         }
       },
 
-      selectLevel(lvl, withSound = true) {
-        if (withSound) soundFX.playClick();
+      selectLevel(lvl) {
+        soundFX.playClick();
         this.selectedLevel = lvl;
 
         const themeMap = {
-          1: { border: 'border-emerald-400', bg: 'bg-emerald-50/90' },
-          2: { border: 'border-amber-400', bg: 'bg-amber-50/90' },
-          3: { border: 'border-orange-400', bg: 'bg-orange-50/90' },
-          4: { border: 'border-purple-400', bg: 'bg-purple-50/90' }
+          1: 'border-emerald-400 bg-emerald-50/90',
+          2: 'border-sky-400 bg-sky-50/90',
+          3: 'border-amber-400 bg-amber-50/90',
+          4: 'border-purple-400 bg-purple-50/90'
         };
 
-        [1, 2, 3, 4].forEach(i => {
-          const card = document.getElementById(`card-level-${i}`);
-          const badge = card.querySelector('.level-badge');
+        document.querySelectorAll('.level-card').forEach((card) => {
+          const cardLvl = parseInt(card.getAttribute('data-level'), 10);
           card.classList.remove(
             'border-emerald-400', 'bg-emerald-50/90',
+            'border-sky-400', 'bg-sky-50/90',
             'border-amber-400', 'bg-amber-50/90',
-            'border-orange-400', 'bg-orange-50/90',
             'border-purple-400', 'bg-purple-50/90',
-            'border-slate-200', 'bg-slate-50'
+            'border-slate-200', 'bg-white'
           );
 
-          if (i === lvl) {
-            card.classList.add(themeMap[i].border, themeMap[i].bg);
-            badge.classList.remove('hidden');
+          if (cardLvl === lvl) {
+            const activeClasses = themeMap[lvl].split(' ');
+            card.classList.add(...activeClasses);
           } else {
-            card.classList.add('border-slate-200', 'bg-slate-50');
-            badge.classList.add('hidden');
+            card.classList.add('border-slate-200', 'bg-white');
           }
         });
       },
 
-      selectMode(mode, withSound = true) {
-        if (withSound) soundFX.playClick();
+      setMode(mode) {
+        soundFX.playClick();
         this.selectedMode = mode;
 
-        const choiceBtn = document.getElementById('mode-btn-choice');
-        const inputBtn = document.getElementById('mode-btn-input');
-
-        if (mode === 'choice') {
-          choiceBtn.className = 'btn-tactile p-3.5 sm:p-4 rounded-2xl border-4 border-sky-400 bg-sky-50 flex flex-col sm:flex-row items-center justify-center gap-2 text-center';
-          inputBtn.className = 'btn-tactile p-3.5 sm:p-4 rounded-2xl border-4 border-slate-200 bg-slate-50 hover:bg-sky-50/50 flex flex-col sm:flex-row items-center justify-center gap-2 text-center';
+        const btnMc = document.getElementById('mode-btn-mc');
+        const btnInput = document.getElementById('mode-btn-input');
+        if (mode === 'mc') {
+          btnMc.className = 'btn-tactile p-3.5 rounded-2xl border-4 border-sky-500 bg-sky-50 text-sky-950 font-extrabold flex items-center gap-3 text-left';
+          btnInput.className = 'btn-tactile p-3.5 rounded-2xl border-4 border-slate-200 bg-white text-slate-700 font-extrabold flex items-center gap-3 text-left';
         } else {
-          inputBtn.className = 'btn-tactile p-3.5 sm:p-4 rounded-2xl border-4 border-sky-400 bg-sky-50 flex flex-col sm:flex-row items-center justify-center gap-2 text-center';
-          choiceBtn.className = 'btn-tactile p-3.5 sm:p-4 rounded-2xl border-4 border-slate-200 bg-slate-50 hover:bg-sky-50/50 flex flex-col sm:flex-row items-center justify-center gap-2 text-center';
+          btnInput.className = 'btn-tactile p-3.5 rounded-2xl border-4 border-sky-500 bg-sky-50 text-sky-950 font-extrabold flex items-center gap-3 text-left';
+          btnMc.className = 'btn-tactile p-3.5 rounded-2xl border-4 border-slate-200 bg-white text-slate-700 font-extrabold flex items-center gap-3 text-left';
         }
       },
 
@@ -1937,22 +1708,24 @@
         quiz.start(this.selectedLevel, this.selectedMode);
       },
 
-      nextLevelAndPlay() {
+      retryLevel() {
+        this.startQuiz();
+      },
+
+      nextLevel() {
         if (this.selectedLevel < 4) {
-          this.selectLevel(this.selectedLevel + 1, false);
+          this.selectLevel(this.selectedLevel + 1);
         }
         this.startQuiz();
       },
 
       showResult(stats) {
         this.showScreen('screen-result');
-        soundFX.playFanfare();
 
         document.getElementById('result-score').textContent = stats.score;
         document.getElementById('result-correct').textContent = `${stats.correctCount}/10`;
         document.getElementById('result-best-streak').textContent = `🔥 ${stats.bestStreak}`;
 
-        // Hitung bintang (1 - 3)
         let starCount = 1;
         if (stats.correctCount >= 8) starCount = 3;
         else if (stats.correctCount >= 5) starCount = 2;
@@ -1970,48 +1743,63 @@
 
         const titleEl = document.getElementById('result-title');
         const subEl = document.getElementById('result-subtitle');
+        let spokenResult = '';
+
         if (starCount === 3) {
           titleEl.textContent = 'Juara Satuan Panjang! 🏆';
           subEl.textContent = 'Kamu luar biasa! Kiko si kelinci bangga sekali dengan ketelitianmu!';
+          spokenResult = `Selamat! Kamu menjadi Juara Satuan Panjang dengan skor ${stats.score} dan benar ${stats.correctCount} dari 10 soal!`;
           if (typeof confetti === 'function') {
             confetti({ particleCount: 90, spread: 80, origin: { y: 0.6 } });
           }
         } else if (starCount === 2) {
           titleEl.textContent = 'Petualang Hebat! 🌟';
           subEl.textContent = 'Bagus sekali! Terus berlatih lompatan tangga agar makin mahir!';
+          spokenResult = `Bagus sekali! Kamu mendapatkan skor ${stats.score} dengan ${stats.correctCount} jawaban benar!`;
         } else {
           titleEl.textContent = 'Semangat Belajar! 💪';
           subEl.textContent = 'Jangan menyerah! Coba menu Belajar Tangga agar makin paham cara naik dan turun tangga.';
+          spokenResult = `Semangat belajar! Skormu ${stats.score}. Ayo berlatih lagi agar makin mahir!`;
         }
 
-        // Tampilkan tombol Naik Level hanya jika belum di Level 4
-        const nextLevelBtn = document.getElementById('btn-next-level');
-        if (stats.level < 4) {
-          nextLevelBtn.classList.remove('hidden');
-        } else {
-          nextLevelBtn.classList.add('hidden');
-        }
-      },
+        soundFX.playFanfare(spokenResult);
 
-      bindKeyboardShortcuts() {
-        document.addEventListener('keydown', (e) => {
-          const quizScreen = document.getElementById('screen-quiz');
-          if (!quizScreen || quizScreen.classList.contains('hidden')) return;
-
-          if (e.key === 'Enter') {
-            e.preventDefault();
-            if (!quiz.answered && quiz.mode === 'input') {
-              quiz.submitInputAnswer();
-            } else if (quiz.answered) {
-              quiz.nextQuestion();
-            }
+        const nextLvlBtn = document.getElementById('btn-next-level');
+        if (nextLvlBtn) {
+          if (this.selectedLevel < 4) {
+            nextLvlBtn.classList.remove('hidden');
+          } else {
+            nextLvlBtn.classList.add('hidden');
           }
-        });
+        }
       }
     };
 
-    window.addEventListener('DOMContentLoaded', () => {
-      app.init();
+    // Ekspos ke objek global window agar semua tombol onclick dapat mengaksesnya secara pasti
+    window.soundFX = soundFX;
+    window.explorer = explorer;
+    window.quiz = quiz;
+    window.app = app;
+
+    // Dukungan keyboard fisik saat mode Ketik Jawaban
+    document.addEventListener('keydown', (e) => {
+      const quizScreen = document.getElementById('screen-quiz');
+      if (!quizScreen || quizScreen.classList.contains('hidden')) return;
+      if (quiz.mode !== 'input') return;
+
+      if (e.key >= '0' && e.key <= '9') {
+        quiz.pressKeypad(e.key);
+      } else if (e.key === 'Backspace') {
+        quiz.backspaceInput();
+      } else if (e.key === 'Escape') {
+        quiz.clearInput();
+      } else if (e.key === 'Enter') {
+        if (!quiz.answered) {
+          quiz.submitTypedAnswer();
+        } else {
+          quiz.nextQuestion();
+        }
+      }
     });
   </script>
 </body>
